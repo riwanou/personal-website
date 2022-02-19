@@ -1,0 +1,6 @@
+local
+.env
+.env.*
+!.env.example
+.dockerignore
+.DS_Store

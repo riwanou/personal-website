@@ -1,0 +1,17 @@
+# build app from files
+FROM node:14-alpine AS builder
+
+WORKDIR src/app
+COPY . . 
+
+RUN npm ci
+RUN npm run build
+
+# final stage app for production
+FROM node:14-alpine
+WORKDIR production/app
+
+COPY --from=builder /src/app/build .
+RUN ls
+
+CMD [ "node", "index.js" ]
