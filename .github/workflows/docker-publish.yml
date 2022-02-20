@@ -7,13 +7,13 @@ name: Docker
 
 on:
   schedule:
-    - cron: '22 4 * * *'
+    - cron: "22 4 * * *"
   push:
-    branches: [ main ]
+    branches: [main]
     # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    tags: ["v*.*.*"]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   REGISTRY: ghcr.io
@@ -25,7 +25,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    
+
     strategy:
       matrix:
         name: [web-app, nginx-server]
@@ -45,7 +45,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-        
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
@@ -59,16 +59,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          
+
   deploy:
     needs: build-and-push-image
     runs-on: ubuntu-latest
-    
+
     steps:
-      
       - name: checkout
         uses: actions/checkout@v1
-        
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
@@ -85,10 +84,6 @@ jobs:
           SSH_USER: ${{ secrets.USERNAME }}
           SSH_KEY: ${{ secrets.KEY }}
           SSH_HOST: ${{ secrets.HOST }}
-            
+
       - name: deploy
-        run: ssh deploy 'cd fullstack-app && docker-compose --verbose down && docker-compose --verbose up -d'
-    
-    
-    
-      
+        run: ssh deploy 'cd fullstack-app && docker-compose --verbose down && docker-compose pull && docker-compose --verbose up -d'
