@@ -1,19 +1,19 @@
-import type { RequestHandler } from "@sveltejs/kit";
-
-const posts: Post[] = [
+export const posts: Post[] = [
 	{
+		uid: "1",
 		name: "First",
 		content: "Hello, this is my first post"
 	},
 	{
+		uid: "2",
 		name: "Second",
 		content: "Second post"
 	}
 ];
 
-export const get: RequestHandler = (request) => {
+export async function get() {
 	return {
 		body: { posts: posts },
 		status: 200
 	};
-};
+}
