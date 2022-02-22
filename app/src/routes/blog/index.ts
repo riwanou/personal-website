@@ -1,22 +1,14 @@
-const modules = import.meta.glob("../../posts/*.md");
-let promisePool = [];
-
-for (let [path, module] of Object.entries(modules)) {
-	module().then(({ metadata }) => {
-		console.log(metadata);
-	});
-	promisePool.push(module().then((module) => module.default));
-}
-
 export async function get() {
-	const posts = await Promise.all(promisePool);
+	const postFiles = import.meta.glob("/posts/*.md");
+	let posts = [];
 
-	console.log(posts[0]);
-
-	const a = posts[0].render();
+	for (const [path, resolver] of Object.entries(postFiles)) {
+		const post = await resolver();
+		posts.push(post.metadata);
+	}
 
 	return {
-		body: { posts: a },
+		body: { posts },
 		status: 200
 	};
 }

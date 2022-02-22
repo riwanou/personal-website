@@ -7,6 +7,8 @@ published_at: "21 February 2021"
 
 # This is the first post
 
+{title}
+
 It should be _visible_ on the **blog page**.
 
 - This is a list item

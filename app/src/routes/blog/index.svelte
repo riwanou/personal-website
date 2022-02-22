@@ -20,16 +20,13 @@
 		on:click={swapTheme}>Swap theme</button>
 </div>
 
-<article class="prose dark:prose-invert prose-slate">
-	{@html posts.html}
-</article>
-
 <div class="flex flex-col justify-center m-5 gap-3 mt-14">
-	<!-- {#each posts as { name, content }, i}
-		<div
-			class="self-center w-1/2 bg-slate-100 dark:bg-slate-700 p-2 pb-3 rounded-md flex flex-col gap-1 shadow-sm">
-			<h2 class="text-xl">{name}</h2>
-			<p>{content}</p>
-		</div>
-	{/each} -->
+	{#each posts as { title, slug, resume }, i}
+		<a
+			class="self-center w-1/2 bg-slate-100 dark:bg-slate-700 p-2 pb-3 rounded-md flex flex-col gap-1 shadow-sm"
+			href="blog/{slug}">
+			<h2 class="text-xl">{title}</h2>
+			<p>{resume}</p>
+		</a>
+	{/each}
 </div>
