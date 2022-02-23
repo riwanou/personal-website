@@ -1,5 +1,5 @@
 export async function get() {
-	const postFiles = import.meta.glob("/posts/*.md");
+	const postFiles = import.meta.glob("/src/posts/*.md");
 	let posts = [];
 
 	for (const [path, resolver] of Object.entries(postFiles)) {
