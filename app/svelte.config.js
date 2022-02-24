@@ -10,8 +10,14 @@ const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
 	extensions: [".svelte", ".md"],
+	preprocess: [mdsvex(mdsvexConfig), preprocess({ postcss: true })],
 
-	preprocess: [preprocess(mdsvex({ extensions: [".md"] })), mdsvex(mdsvexConfig)],
+	onwarn: (warning, handler) => {
+		const { code, frame } = warning;
+		if (code === "css-unused-selector") return;
+
+		handler(warning);
+	},
 
 	kit: {
 		adapter: adapter()

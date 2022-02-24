@@ -1,7 +1,6 @@
 <script lang="ts">
 	export let post;
 	let data = post.metadata;
-	console.log(data);
 </script>
 
 <head>

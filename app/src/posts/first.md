@@ -1,8 +1,7 @@
 ---
 title: "First"
 summary: "the first post"
-# date: "2022-02-21"
-date: "21 Febuary 2022"
+date: "Feb 21, 2022"
 slug: "first"
 ---
 

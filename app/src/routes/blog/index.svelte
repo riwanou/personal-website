@@ -20,10 +20,10 @@
 		on:click={swapTheme}>Swap theme</button>
 </div>
 
-<div class="m-5 mt-14 flex flex-col justify-center gap-3">
+<div class="m-1 mt-14 flex flex-col justify-center gap-3">
 	{#each posts as { title, slug, summary, date }, i}
 		<a
-			class="flex w-1/2 flex-col gap-1 self-center rounded-md bg-slate-100 p-2 pb-3 shadow-sm dark:bg-slate-700"
+			class="flex w-10/12 max-w-xl flex-col gap-1 self-center rounded-md bg-slate-100 p-2 pb-3 shadow-sm dark:bg-slate-700"
 			rel="prefetch"
 			href="blog/{slug}">
 			<time class="text-sm font-thin">{date}</time>
