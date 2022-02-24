@@ -14,17 +14,11 @@
 			Feel free to check my last projects on
 			<a class="link" href="https://github.com/riwanou" target="_blank">Github</a>.
 		</p>
-		<a class="button" href="blog">Blog</a>
 	</div>
 </div>
 
 <style lang="postcss">
 	.link {
 		@apply inline-block font-medium decoration-green-500 hover:underline focus:underline;
-	}
-
-	.button {
-		@apply mt-8 self-center rounded-md bg-green-400 px-4 py-1 text-lg shadow-md;
-		@apply transition-transform duration-300 ease-out hover:scale-105;
 	}
 </style>

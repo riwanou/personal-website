@@ -9,7 +9,7 @@ slug: "first"
 
 {title}
 
-It should be _visible_ on the **blog page**.
+It should be _visible_ on the **posts page**.
 
 - This is a list item
   - Milk
