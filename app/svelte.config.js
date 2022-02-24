@@ -20,7 +20,8 @@ const config = {
 	},
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		inlineStyleThreshold: 1024
 	}
 };
 
