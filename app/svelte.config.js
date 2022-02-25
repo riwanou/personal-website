@@ -2,6 +2,7 @@ import mdsvexConfig from "./mdsvex.config.js";
 import adapter from "@sveltejs/adapter-node";
 import preprocess from "svelte-preprocess";
 import { mdsvex } from "mdsvex";
+import { resolve } from "path";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -15,13 +16,20 @@ const config = {
 	onwarn: (warning, handler) => {
 		const { code, frame } = warning;
 		if (code === "css-unused-selector") return;
-
 		handler(warning);
 	},
 
 	kit: {
 		adapter: adapter(),
-		inlineStyleThreshold: 1024
+		inlineStyleThreshold: 1024,
+		vite: {
+			// assetsInclude: "**/*.glsl",
+			resolve: {
+				alias: {
+					$threejs: resolve("./src/threejs")
+				}
+			}
+		}
 	}
 };
 

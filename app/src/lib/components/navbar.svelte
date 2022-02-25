@@ -23,7 +23,6 @@
 	</div>
 </div>
 
-<!-- </div> -->
 <style lang="postcss">
 	#navbar {
 		@apply sticky top-0 py-4;

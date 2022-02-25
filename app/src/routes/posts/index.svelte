@@ -22,7 +22,7 @@
 	{#if show}
 		{#each posts as { title, slug, summary, date }, i}
 			<a
-				in:fly={{ duration: 700, y: 10, opacity: 0.3, easing: quadOut, delay: i * 200 }}
+				in:fly={{ duration: 700, y: 10, easing: quadOut, delay: i * 200 }}
 				class="flex w-10/12 max-w-xl flex-col gap-1 self-center rounded-md bg-stone-100 p-2 pb-3 shadow-sm dark:bg-slate-700"
 				rel="prefetch"
 				href="posts/{slug}">
