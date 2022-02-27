@@ -1,24 +1,34 @@
 <script lang="ts">
-	import { createScene, destroyScene, renderScene } from "$threejs/main";
+	import { createScene, resizeScene, destroyScene, updateScene, renderScene } from "$threejs/main";
 	import { onMount } from "svelte";
 
 	let resize: () => void;
 	let canvas: HTMLCanvasElement;
 
-	onMount(() => {
+	onMount(async () => {
+		// handle resizing of browser window
 		resize = () => {
 			const width = window.innerWidth;
-			const height = window.innerHeight - canvas.offsetTop;
+			const height = window.innerHeight;
 			canvas.style.width = width + "px";
 			canvas.style.height = height + "px";
+			resizeScene(width, height);
 		};
 
+		// init scene
+		await createScene(canvas);
 		resize();
 		window.addEventListener("resize", resize);
 
-		createScene(canvas);
-		renderScene();
+		// update loop
+		const run = () => {
+			updateScene();
+			renderScene();
+			window.requestAnimationFrame(run);
+		};
+		run();
 
+		// clean up
 		return () => {
 			destroyScene();
 			window.removeEventListener("resize", resize);
@@ -32,10 +42,10 @@
 	<meta name="author" content="riwanou" />
 </head>
 
-<canvas bind:this={canvas} class="absolute -z-10" />
+<canvas bind:this={canvas} class="absolute top-0 -z-10" />
 
-<div class="flex justify-center">
-	<div class="mx-5 my-16 flex flex-col">
+<div class="my-40 mx-5 flex flex-col items-center">
+	<div class="flex flex-col">
 		<p class="pb-6 text-4xl font-semibold">Hey, Welcome.<br /></p>
 		<p class="pb-2 text-xl font-medium">My name is Riwan Coëffic.</p>
 		<p class="max-w-xl break-words text-lg">
@@ -44,9 +54,16 @@
 			<a class="link" href="https://github.com/riwanou" target="_blank">Github</a>.
 		</p>
 	</div>
+	<a
+		href="/posts"
+		class="my-10 block rounded-lg bg-indigo-600 px-4 py-2 text-center text-xl shadow-xl">Posts</a>
 </div>
 
 <style lang="postcss">
+	:global(html) {
+		@apply h-full bg-slate-900 text-gray-100;
+	}
+
 	.link {
 		@apply inline-block font-medium decoration-green-500 hover:underline focus:underline;
 	}
