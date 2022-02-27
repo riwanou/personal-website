@@ -17,6 +17,8 @@
 
 		// init scene
 		await createScene(canvas);
+
+		// handle resize
 		resize();
 		window.addEventListener("resize", resize);
 
@@ -40,6 +42,7 @@
 	<title> Riwan Coeffic - Home </title>
 	<meta name="description" content="Riwan's personal website" />
 	<meta name="author" content="riwanou" />
+	<link rel="stylesheet" href="/src/routes/home.css" />
 </head>
 
 <canvas bind:this={canvas} class="absolute top-0 -z-10" />
@@ -60,10 +63,6 @@
 </div>
 
 <style lang="postcss">
-	:global(html) {
-		@apply h-full bg-slate-900 text-gray-100;
-	}
-
 	.link {
 		@apply inline-block font-medium decoration-green-500 hover:underline focus:underline;
 	}

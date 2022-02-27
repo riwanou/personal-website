@@ -10,12 +10,6 @@ import {
 	SphereGeometry,
 	ShaderMaterial,
 	PointLight,
-	UniformsUtils,
-	UniformsLib,
-	BoxGeometry,
-	MeshBasicMaterial,
-	MeshLambertMaterial,
-	MeshStandardMaterial,
 	AmbientLight,
 	MeshPhongMaterial
 } from "three";
@@ -43,7 +37,12 @@ async function loadShader(name, path) {
 const uniform = { uTime: { value: 0 } };
 
 export async function createScene(canvas) {
-	renderer = new WebGLRenderer({ antialias: true, canvas: canvas, preserveDrawingBuffer: true });
+	renderer = new WebGLRenderer({
+		antialias: true,
+		canvas: canvas,
+		preserveDrawingBuffer: true,
+		alpha: true
+	});
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	renderer.physicallyCorrectLights = true;
 	renderer.outputEncoding = sRGBEncoding;
@@ -56,8 +55,8 @@ export async function createScene(canvas) {
 	scene.add(camera);
 
 	// load shaders
-	await loadShader("basic.vr", "shaders/basic.vr");
-	await loadShader("basic.fa", "shaders/basic.fa");
+	// await loadShader("basic.vr", "shaders/basic.vr");
+	// await loadShader("basic.fa", "shaders/basic.fa");
 
 	// lights
 	const ambientLight = new AmbientLight(0xffffff, 0.5);
