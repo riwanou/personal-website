@@ -42,7 +42,7 @@
 	<title> Riwan Coeffic - Home </title>
 	<meta name="description" content="Riwan's personal website" />
 	<meta name="author" content="riwanou" />
-	<link rel="stylesheet" href="/src/routes/home.css" />
+	<link rel="stylesheet" href="/home.css" />
 </head>
 
 <canvas bind:this={canvas} class="absolute top-0 -z-10" />
@@ -58,11 +58,15 @@
 		</p>
 	</div>
 	<a
+		target="_self"
 		href="/posts"
 		class="my-10 block rounded-lg bg-indigo-600 px-4 py-2 text-center text-xl shadow-xl">Posts</a>
 </div>
 
 <style lang="postcss">
+	:global(html) {
+		@apply bg-slate-800 text-gray-100;
+	}
 	.link {
 		@apply inline-block font-medium decoration-green-500 hover:underline focus:underline;
 	}
