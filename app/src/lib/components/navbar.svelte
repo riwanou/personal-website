@@ -14,7 +14,7 @@
 <div id="navbar">
 	<div id="container">
 		<div class="flex gap-8">
-			<a href="/">Home</a>
+			<a target="_self" href="/">Home</a>
 			<a href="/posts">Posts</a>
 		</div>
 		{#key updateButton}

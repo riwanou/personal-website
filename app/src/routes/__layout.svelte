@@ -5,3 +5,9 @@
 
 <DarkMode />
 <slot />
+
+<style lang="postcss">
+	:global(html, body, body > div) {
+		@apply h-full;
+	}
+</style>

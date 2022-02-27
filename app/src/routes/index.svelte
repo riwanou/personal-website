@@ -47,7 +47,7 @@
 
 <canvas bind:this={canvas} class="absolute top-0 -z-10" />
 
-<div class="my-40 mx-5 flex flex-col items-center">
+<div class="mx-5 flex h-full flex-col items-center justify-center">
 	<div class="flex flex-col">
 		<p class="pb-6 text-4xl font-semibold">Hey, Welcome.<br /></p>
 		<p class="pb-2 text-xl font-medium">My name is Riwan Coëffic.</p>
