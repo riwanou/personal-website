@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { createScene, resizeScene, destroyScene, updateScene, renderScene } from "$threejs/main";
-	import { fade } from "svelte/transition";
 	import { onMount } from "svelte";
+	import { fade } from "svelte/transition";
 
 	let resize: () => void;
 	let canvas: HTMLCanvasElement;
-	let loaded = false;
+	let load = false;
 
 	onMount(async () => {
-		loaded = true;
-
 		// handle resizing of browser window
 		resize = () => {
 			const width = window.innerWidth;
@@ -21,6 +19,8 @@
 
 		// init scene
 		await createScene(canvas);
+		canvas.classList.remove("invisible");
+		load = true;
 
 		// handle resize
 		resize();
@@ -49,10 +49,12 @@
 	<link rel="stylesheet" href="/home.css" />
 </head>
 
-<canvas bind:this={canvas} class="absolute top-0 -z-10" />
+<canvas bind:this={canvas} class="invisible absolute top-0 -z-10 transition-opacity duration-500" />
 
-{#if loaded}
-	<div in:fade class="mx-5 flex h-full flex-col items-center justify-center">
+{#if load}
+	<div
+		in:fade={{ duration: 400, delay: 400 }}
+		class="mx-5 flex h-full flex-col items-center justify-center">
 		<div class="flex flex-col">
 			<p class="pb-6 text-4xl font-semibold">Hey, Welcome.<br /></p>
 			<p class="pb-2 text-xl font-medium">My name is Riwan Coëffic.</p>
@@ -71,8 +73,13 @@
 
 <style lang="postcss">
 	:global(html) {
-		@apply bg-slate-800 text-gray-100;
+		@apply bg-slate-900 text-gray-100;
 	}
+
+	:global(.invisible) {
+		@apply opacity-0;
+	}
+
 	.link {
 		@apply inline-block font-medium decoration-green-500 hover:underline focus:underline;
 	}

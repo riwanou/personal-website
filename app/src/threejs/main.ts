@@ -37,6 +37,7 @@ async function loadShader(name, path) {
 const uniform = { uTime: { value: 0 } };
 
 export async function createScene(canvas) {
+	// renderer settings
 	renderer = new WebGLRenderer({
 		antialias: true,
 		canvas: canvas,
@@ -47,9 +48,11 @@ export async function createScene(canvas) {
 	renderer.physicallyCorrectLights = true;
 	renderer.outputEncoding = sRGBEncoding;
 
+	// scene and loaders
 	scene = new Scene();
 	fileLoader = new FileLoader();
 
+	// camera settings
 	camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 	camera.position.z = 5;
 	scene.add(camera);
@@ -62,19 +65,20 @@ export async function createScene(canvas) {
 	const ambientLight = new AmbientLight(0xffffff, 0.5);
 	scene.add(ambientLight);
 
-	const light = new PointLight(0xffffff, 100);
-	light.position.set(20, 17, 25);
-	scene.add(light);
+	const pointLight = new PointLight(0xffffff, 100);
+	pointLight.position.set(20, 17, 25);
+	scene.add(pointLight);
 
 	// geometry and materials
 	const geometry = new SphereGeometry(2.1, 40, 40);
+	const material = new MeshPhongMaterial({ color: new Color("crimson"), shininess: 16 });
 
 	// custom shader code in standart material
-	const material = new MeshPhongMaterial({ color: new Color("crimson"), shininess: 16 });
 	material.onBeforeCompile = (shader) => {
 		shader.uniforms = { ...uniform, ...shader.uniforms };
 		shader.vertexShader = "uniform float time;\n" + shader.vertexShader;
 
+		// before main function
 		shader.vertexShader = shader.vertexShader.replace(
 			"#include <common>",
 			`
@@ -85,6 +89,7 @@ export async function createScene(canvas) {
 			`
 		);
 
+		// in main function
 		shader.vertexShader = shader.vertexShader.replace(
 			"#include <begin_vertex>",
 			`

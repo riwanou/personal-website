@@ -26,7 +26,8 @@
 			{#each posts as { title, slug, summary, date }, i}
 				<a
 					in:fly={{ duration: 700, y: 10, easing: quadOut, delay: i * 200 + 300 }}
-					class="flex w-10/12 max-w-xl flex-col gap-1 self-center rounded-md bg-stone-100 p-2 pb-3 shadow-sm dark:bg-slate-700"
+					class="bg-stone-100 dark:bg-slate-700"
+					id="post"
 					href="posts/{slug}">
 					<time class="text-sm font-thin">{date}</time>
 					<h2 class="text-xl">{title}</h2>
@@ -36,3 +37,11 @@
 		{/if}
 	</div>
 </PageTransition>
+
+<style lang="postcss">
+	#post {
+		transition: background 0.35s;
+		@apply flex w-10/12 max-w-xl flex-col gap-1 self-center;
+		@apply rounded-md p-2 pb-3 shadow-sm;
+	}
+</style>
