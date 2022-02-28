@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PageTransition from "$lib/components/page-transition.svelte";
+
 	export let post;
 	let data = post.metadata;
 </script>
@@ -9,15 +11,16 @@
 	<meta name="date" content={data.date} />
 </head>
 
-<!-- <h1>{data.title}</h1> -->
-<div class="flex flex-col items-center py-10">
-	<article class="prose dark:prose-invert py-10">
-		{@html post.html}
-	</article>
-</div>
+<PageTransition>
+	<div class="flex flex-col items-center py-12">
+		<article class="prose dark:prose-invert prose-slate ">
+			{@html post.html}
+		</article>
+	</div>
+</PageTransition>
 
 <style lang="postcss">
 	article {
-		@apply prose-slate prose-lg;
+		@apply prose-lg mx-5;
 	}
 </style>

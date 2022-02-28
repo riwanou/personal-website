@@ -10,6 +10,7 @@
 		@apply bg-slate-900 text-gray-100;
 	}
 	:global(html) {
+		@apply transition-colors duration-200 ease-in-out;
 		@apply bg-stone-50 text-black;
 	}
 </style>

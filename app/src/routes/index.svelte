@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { createScene, resizeScene, destroyScene, updateScene, renderScene } from "$threejs/main";
+	import { fade } from "svelte/transition";
 	import { onMount } from "svelte";
 
 	let resize: () => void;
 	let canvas: HTMLCanvasElement;
+	let loaded = false;
 
 	onMount(async () => {
+		loaded = true;
+
 		// handle resizing of browser window
 		resize = () => {
 			const width = window.innerWidth;
@@ -47,21 +51,23 @@
 
 <canvas bind:this={canvas} class="absolute top-0 -z-10" />
 
-<div class="mx-5 flex h-full flex-col items-center justify-center">
-	<div class="flex flex-col">
-		<p class="pb-6 text-4xl font-semibold">Hey, Welcome.<br /></p>
-		<p class="pb-2 text-xl font-medium">My name is Riwan Coëffic.</p>
-		<p class="max-w-xl break-words text-lg">
-			I am a french computer-science student building stuff on the Web. Eating rice and implementing
-			my ideas is my way of life. Feel free to check my last projects on
-			<a class="link" href="https://github.com/riwanou" target="_blank">Github</a>.
-		</p>
+{#if loaded}
+	<div in:fade class="mx-5 flex h-full flex-col items-center justify-center">
+		<div class="flex flex-col">
+			<p class="pb-6 text-4xl font-semibold">Hey, Welcome.<br /></p>
+			<p class="pb-2 text-xl font-medium">My name is Riwan Coëffic.</p>
+			<p class="max-w-xl break-words text-lg">
+				I am a french computer-science student building stuff on the Web. Eating rice and
+				implementing my ideas is my way of life. Feel free to check my last projects on
+				<a class="link" href="https://github.com/riwanou" target="_blank">Github</a>.
+			</p>
+		</div>
+		<a
+			target="_self"
+			href="/posts"
+			class="my-10 block rounded-lg bg-indigo-600 px-4 py-2 text-center text-xl shadow-xl">Posts</a>
 	</div>
-	<a
-		target="_self"
-		href="/posts"
-		class="my-10 block rounded-lg bg-indigo-600 px-4 py-2 text-center text-xl shadow-xl">Posts</a>
-</div>
+{/if}
 
 <style lang="postcss">
 	:global(html) {
