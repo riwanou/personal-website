@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Footer from "$lib/components/footer.svelte";
 	import PageTransition from "$lib/components/page-transition.svelte";
 
 	export let post;
@@ -17,6 +18,7 @@
 			{@html post.html}
 		</article>
 	</div>
+	<Footer />
 </PageTransition>
 
 <style lang="postcss">

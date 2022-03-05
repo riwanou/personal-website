@@ -3,6 +3,7 @@
 	import { fly, fade } from "svelte/transition";
 	import { quadOut } from "svelte/easing";
 	import PageTransition from "$lib/components/page-transition.svelte";
+	import Footer from "$lib/components/footer.svelte";
 
 	// posts list from server
 	export let posts;
@@ -36,6 +37,10 @@
 			{/each}
 		{/if}
 	</div>
+
+	{#if show}
+		<Footer />
+	{/if}
 </PageTransition>
 
 <style lang="postcss">
