@@ -3,6 +3,6 @@
 	export let time = 400;
 </script>
 
-<main in:fade={{ delay: time, duration: time }} out:fade={{ duration: time }}>
+<main in:fade={{ duration: time }} class="flex h-full flex-col">
 	<slot />
 </main>

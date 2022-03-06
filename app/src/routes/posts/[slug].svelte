@@ -13,12 +13,12 @@
 </head>
 
 <PageTransition>
-	<div class="flex flex-col items-center py-12">
-		<article class="prose dark:prose-invert prose-slate ">
+	<div class="flex h-full flex-col items-center justify-between pt-12">
+		<article class="prose dark:prose-invert prose-slate">
 			{@html post.html}
 		</article>
+		<Footer />
 	</div>
-	<Footer />
 </PageTransition>
 
 <style lang="postcss">

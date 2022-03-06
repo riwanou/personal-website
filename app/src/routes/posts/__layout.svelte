@@ -2,8 +2,10 @@
 	import Navbar from "$lib/components/navbar.svelte";
 </script>
 
-<Navbar />
-<slot />
+<div class="flex h-full flex-col">
+	<Navbar />
+	<slot />
+</div>
 
 <style lang="postcss">
 	:global(html.dark) {
