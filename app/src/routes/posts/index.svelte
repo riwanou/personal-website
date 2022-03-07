@@ -18,17 +18,14 @@
 </head>
 
 <PageTransition>
-	<div class="flex flex-col">
-		<h1 class="mt-5 text-center text-6xl">Posts</h1>
-	</div>
-
+	<h1 class="mt-5 text-center text-6xl">Posts</h1>
 	<div class="flex h-full flex-col justify-between">
 		<div class="m-1 mt-14 flex flex-col justify-center gap-3">
 			{#if show}
 				{#each posts as { title, slug, summary, date }, i}
 					<a
 						in:fly={{ duration: 700, y: 10, easing: quadOut, delay: i * 200 + 300 }}
-						class="bg-stone-100 dark:bg-slate-700"
+						class="bg-stone-50 dark:bg-slate-700"
 						id="post"
 						sveltekit:prefetch
 						href="posts/{slug}">
@@ -47,6 +44,6 @@
 	#post {
 		transition: background 0.35s;
 		@apply flex w-10/12 max-w-xl flex-col gap-1 self-center;
-		@apply rounded-md p-2 pb-3 shadow-sm;
+		@apply rounded-md p-2 pb-3 drop-shadow-md;
 	}
 </style>
