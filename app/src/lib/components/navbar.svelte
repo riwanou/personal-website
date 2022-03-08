@@ -27,7 +27,7 @@
 <style lang="postcss">
 	#navbar {
 		@apply sticky top-0 py-4;
-		@apply z-10 shadow-md;
+		@apply z-10;
 		@apply backdrop-blur-md;
 		mask: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 97%, rgba(0, 0, 0, 0) 100%);
 	}

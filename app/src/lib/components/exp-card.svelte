@@ -7,6 +7,7 @@
 <a
 	href={"experiments/" + experiment.path}
 	id="card"
+	class="shadow-lg dark:shadow-slate-800"
 	in:fly={{ duration: 800, x: 10, delay: delay * 300 }}>
 	<img src={experiment.image} alt={experiment.name + " background"} />
 	<div id="desc">
@@ -22,9 +23,10 @@
 <style lang="postcss">
 	#card {
 		@apply relative;
-		@apply rounded-xl shadow-lg;
+		@apply rounded-xl;
 		@apply hover:scale-[103%];
-		@apply overflow-hidden transition-transform duration-200;
+		@apply overflow-hidden transition duration-200;
+		@apply border-white border-opacity-10;
 	}
 
 	#card:hover #desc {
@@ -35,7 +37,7 @@
 		@apply translate-y-full transition duration-300;
 		@apply absolute bottom-0 w-full p-4;
 		@apply text-left text-white drop-shadow-lg;
-		background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
+		background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.4));
 	}
 
 	#title {
