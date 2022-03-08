@@ -7,9 +7,10 @@
 <a
 	href={"experiments/" + experiment.path}
 	id="card"
-	in:fly={{ duration: 1000, x: 10, delay: delay * 300 }}>
+	in:fly={{ duration: 800, x: 10, delay: delay * 300 }}>
 	<img src={experiment.image} alt={experiment.name + " background"} />
 	<div id="desc">
+		<time class="pt-2 text-sm font-thin">{experiment.date}</time>
 		<h1 id="title">{experiment.name}</h1>
 		<p class="mb-3">
 			{experiment.sumary}
@@ -38,7 +39,7 @@
 	}
 
 	#title {
-		@apply mb-3 pt-2 text-lg font-bold;
+		@apply mb-2 pt-1 text-lg font-semibold;
 	}
 
 	img {

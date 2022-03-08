@@ -1,13 +1,13 @@
 [
 	{
-		"name": "first bubble",
+		"name": "First Bubble",
 		"sumary": "wobbly bubble, use simple shaders",
 		"date": "Tue 8 Mar",
-		"path": "main",
+		"path": "bubble",
 		"image": "experiments/bubble.png"
 	},
 	{
-		"name": "second",
+		"name": "Second",
 		"sumary": "nothing, it's only the second",
 		"date": "Tue 8 Mar",
 		"path": "main",

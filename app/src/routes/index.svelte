@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { createScene, resizeScene, destroyScene, updateScene, renderScene } from "$threejs/main";
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 	import { fade } from "svelte/transition";
 
 	let resize: () => void;
+	let destroy: () => void;
 	let canvas: HTMLCanvasElement;
 	let load = false;
 
@@ -15,6 +16,12 @@
 			canvas.style.width = width + "px";
 			canvas.style.height = height + "px";
 			resizeScene(width, height);
+		};
+
+		// clean up
+		destroy = () => {
+			destroyScene();
+			window.removeEventListener("resize", resize);
 		};
 
 		// init scene
@@ -33,12 +40,11 @@
 			window.requestAnimationFrame(run);
 		};
 		run();
+	});
 
-		// clean up
-		return () => {
-			destroyScene();
-			window.removeEventListener("resize", resize);
-		};
+	// clean up
+	onDestroy(() => {
+		if (destroy) destroy();
 	});
 </script>
 
