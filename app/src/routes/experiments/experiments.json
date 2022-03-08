@@ -10,10 +10,16 @@
 		"name": "Second",
 		"sumary": "nothing, it's only the second",
 		"date": "Tue 8 Mar",
-		"path": "main",
+		"path": "second",
 		"image": ""
 	},
-	{},
+	{
+		"name": "Third",
+		"sumary": "when life give you chocolate",
+		"date": "Wed 9 Mar",
+		"path": "third",
+		"image": ""
+	},
 	{},
 	{},
 	{},
