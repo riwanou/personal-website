@@ -4,6 +4,7 @@
 	import Footer from "$lib/components/footer.svelte";
 	import PageTransition from "$lib/components/page-transition.svelte";
 	import experimentsJSON from "./experiments.json";
+	import Page from "$lib/components/page.svelte";
 
 	// transition key
 	let show = false;
@@ -14,19 +15,21 @@
 	<title>Experiments</title>
 </head>
 
-<PageTransition>
-	<h1 class="mt-8 mb-14 text-center text-6xl">Experiments</h1>
-	<div class="flex h-full flex-col justify-between">
-		<div id="wrapper">
-			{#if show}
-				{#each experimentsJSON as experiment, i}
-					<ExpCard delay={i} {experiment} />
-				{/each}
-			{/if}
+<Page>
+	<PageTransition>
+		<h1 class="mt-8 mb-14 text-center text-6xl">Experiments</h1>
+		<div class="flex h-full flex-col justify-between">
+			<div id="wrapper">
+				{#if show}
+					{#each experimentsJSON as experiment, i}
+						<ExpCard delay={i} {experiment} />
+					{/each}
+				{/if}
+			</div>
+			<Footer />
 		</div>
-		<Footer />
-	</div>
-</PageTransition>
+	</PageTransition>
+</Page>
 
 <style lang="postcss">
 	#wrapper {

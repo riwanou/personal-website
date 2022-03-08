@@ -24,11 +24,9 @@ export async function createScene(canvas, init: Function, load: Function) {
 	renderer = new WebGLRenderer({
 		antialias: true,
 		canvas: canvas,
-		preserveDrawingBuffer: true,
-		alpha: true
+		preserveDrawingBuffer: true
 	});
 
-	renderer.setClearColor(new Color("#AED6F1"), 0.5);
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	renderer.physicallyCorrectLights = true;
 	renderer.outputEncoding = sRGBEncoding;

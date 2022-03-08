@@ -5,14 +5,19 @@
 	import PageTransition from "$lib/components/page-transition.svelte";
 	import { createScene, resizeScene, destroyScene, updateScene, renderScene } from "$threejs/scene";
 
-	const path = "/src/threejs/experiments/" + $page.params.slug;
 	let resize: () => void;
 	let destroy: () => void;
 	let canvas: HTMLCanvasElement;
 	let load = false;
+	const path = $page.params.slug;
 
 	onMount(async () => {
-		const module = await import(path);
+		// please make dynamic string import work one day ;(
+		const module =
+			(path === "bubble" && (await import("$threejs/experiments/bubble"))) ||
+			(path === "second" && (await import("$threejs/experiments/second"))) ||
+			(path === "third" && (await import("$threejs/experiments/third"))) ||
+			(await import("$threejs/experiments/second"));
 
 		// handle resizing of browser window
 		resize = () => {
@@ -61,7 +66,8 @@
 
 {#if load}
 	<PageTransition>
-		<div class="flex h-full flex-col justify-between">
+		<div class="flex h-full flex-col justify-between text-black">
+			<a id="link" href="/experiments">Go back</a>
 			<div />
 			<Footer />
 		</div>
@@ -71,5 +77,10 @@
 <style lang="postcss">
 	:global(.invisible) {
 		@apply opacity-0;
+	}
+
+	#link {
+		@apply p-4 text-center text-xl;
+		@apply transition-transform active:-translate-y-1;
 	}
 </style>
