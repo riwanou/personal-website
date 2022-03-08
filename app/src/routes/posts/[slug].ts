@@ -3,7 +3,7 @@ export async function get({ params }) {
 	let post;
 
 	// search for post with slug attribute
-	for (const [path, resolver] of Object.entries(postFiles)) {
+	for (const [, resolver] of Object.entries(postFiles)) {
 		const res = await resolver();
 		// found the markdown file with specified slug
 		if (res.metadata.slug === params.slug) {

@@ -1,0 +1,21 @@
+[
+	{
+		"name": "first bubble",
+		"sumary": "wobbly bubble, use simple shaders",
+		"date": "Tue 8 Mar",
+		"path": "main",
+		"image": "experiments/bubble.png"
+	},
+	{
+		"name": "second",
+		"sumary": "nothing, it's only the second",
+		"date": "Tue 8 Mar",
+		"path": "main",
+		"image": ""
+	},
+	{},
+	{},
+	{},
+	{},
+	{}
+]

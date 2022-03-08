@@ -1,7 +1,13 @@
 <script>
-	import Card from "$lib/components/card.svelte";
+	import { onMount } from "svelte";
+	import ExpCard from "$lib/components/exp-card.svelte";
 	import Footer from "$lib/components/footer.svelte";
 	import PageTransition from "$lib/components/page-transition.svelte";
+	import experimentsJSON from "./experiments.json";
+
+	// transition key
+	let show = false;
+	onMount(() => (show = true));
 </script>
 
 <head>
@@ -12,12 +18,16 @@
 	<h1 class="mt-8 mb-14 text-center text-6xl">Experiments</h1>
 	<div class="flex h-full flex-col justify-between">
 		<div id="wrapper">
-			<Card>First</Card>
-			<Card>Second</Card>
-			<Card>Third</Card>
-			<Card>Fourth</Card>
-			<Card>Funf</Card>
-			<Card>Sixth</Card>
+			{#if show}
+				{#each experimentsJSON as exp, i}
+					<ExpCard
+						title={exp.name}
+						content={exp.sumary}
+						link={"experiments/" + exp.path}
+						img={exp.image}
+						delay={i} />
+				{/each}
+			{/if}
 		</div>
 		<Footer />
 	</div>
@@ -25,10 +35,8 @@
 
 <style lang="postcss">
 	#wrapper {
-		@apply grid;
-		@apply w-full max-w-md;
-		@apply mx-auto gap-3 px-10;
-		@apply sm:max-w-3xl sm:grid-cols-2;
-		@apply lg:max-w-screen-xl lg:grid-cols-3 lg:grid-rows-3;
+		@apply mx-auto grid gap-4 px-10;
+		@apply sm:max-w-2xl lg:max-w-screen-lg xl:max-w-screen-xl;
+		@apply grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
 	}
 </style>
