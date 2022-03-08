@@ -19,13 +19,8 @@
 	<div class="flex h-full flex-col justify-between">
 		<div id="wrapper">
 			{#if show}
-				{#each experimentsJSON as exp, i}
-					<ExpCard
-						title={exp.name}
-						content={exp.sumary}
-						link={"experiments/" + exp.path}
-						img={exp.image}
-						delay={i} />
+				{#each experimentsJSON as experiment, i}
+					<ExpCard delay={i} {experiment} />
 				{/each}
 			{/if}
 		</div>
