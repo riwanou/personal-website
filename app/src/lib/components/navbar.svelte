@@ -1,13 +1,16 @@
 <script>
 	import { theme } from "$lib/utils/dark-mode";
+	import { create_in_transition } from "svelte/internal";
 	import { fly } from "svelte/transition";
 
-	let updateButton = false;
+	let button;
+	let anim;
 
 	const swapTheme = () => {
 		if ($theme === "light") $theme = "dark";
 		else $theme = "light";
-		updateButton = !updateButton;
+		anim = create_in_transition(button, fly, { y: -10, duration: 600 });
+		anim.start();
 	};
 </script>
 
@@ -18,9 +21,7 @@
 			<a href="/posts">Posts</a>
 			<a href="/experiments">Experiments</a>
 		</div>
-		{#key updateButton}
-			<button in:fly|local={{ y: -10, duration: 400 }} on:click={swapTheme}>Swap theme</button>
-		{/key}
+		<button bind:this={button} on:click={swapTheme}>Swap theme</button>
 	</div>
 </div>
 
