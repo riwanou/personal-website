@@ -1,5 +1,5 @@
 <footer>
-	<p>
+	<p aria-hidden>
 		© {new Date().getFullYear()} Riwan Coëffic. All rights reserved.
 	</p>
 </footer>

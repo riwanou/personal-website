@@ -67,8 +67,7 @@
 {#if load}
 	<PageTransition>
 		<div class="flex h-full flex-col justify-between text-black">
-			<a id="link" href="/experiments">Go back</a>
-			<div />
+			<a id="link" target="_self" href="/experiments">Go back</a>
 			<Footer />
 		</div>
 	</PageTransition>

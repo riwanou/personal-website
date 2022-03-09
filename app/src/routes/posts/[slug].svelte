@@ -8,7 +8,7 @@
 
 <head>
 	<title>{data.title}</title>
-	<meta name="summary" content={data.summary} />
+	<meta name="description" content={data.summary} />
 	<meta name="date" content={data.date} />
 </head>
 
