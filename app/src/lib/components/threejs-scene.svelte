@@ -11,6 +11,7 @@
 	onMount(async () => {
 		// please make dynamic string import work one day ;(
 		const module =
+			(path === "home" && (await import("$threejs/home/home"))) ||
 			(path === "bubble" && (await import("$threejs/experiments/bubble"))) ||
 			(path === "second" && (await import("$threejs/experiments/second"))) ||
 			(path === "third" && (await import("$threejs/experiments/third"))) ||

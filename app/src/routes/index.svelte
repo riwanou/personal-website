@@ -1,51 +1,7 @@
 <script lang="ts">
-	import { createScene, resizeScene, destroyScene, updateScene, renderScene } from "$threejs/main";
-	import { onDestroy, onMount } from "svelte";
 	import { fade } from "svelte/transition";
-
-	let resize: () => void;
-	let destroy: () => void;
-	let canvas: HTMLCanvasElement;
-	let load = false;
-
-	onMount(async () => {
-		// handle resizing of browser window
-		resize = () => {
-			const width = window.innerWidth;
-			const height = window.innerHeight;
-			canvas.style.width = width + "px";
-			canvas.style.height = height + "px";
-			resizeScene(width, height);
-		};
-
-		// clean up
-		destroy = () => {
-			destroyScene();
-			window.removeEventListener("resize", resize);
-		};
-
-		// init scene
-		await createScene(canvas);
-		canvas.classList.remove("invisible");
-		load = true;
-
-		// handle resize
-		resize();
-		window.addEventListener("resize", resize);
-
-		// update loop
-		const run = () => {
-			updateScene();
-			renderScene();
-			window.requestAnimationFrame(run);
-		};
-		run();
-	});
-
-	// clean up
-	onDestroy(() => {
-		if (destroy) destroy();
-	});
+	import ThreejsScene from "$lib/components/threejs-scene.svelte";
+	let path = "home";
 </script>
 
 <head>
@@ -55,9 +11,7 @@
 	<link rel="stylesheet" href="/home.css" />
 </head>
 
-<canvas bind:this={canvas} class="invisible absolute top-0 -z-10 transition-opacity duration-500" />
-
-{#if load}
+<ThreejsScene {path}>
 	<div
 		in:fade={{ duration: 400, delay: 400 }}
 		class="mx-5 flex h-full flex-col items-center justify-center">
@@ -75,15 +29,11 @@
 			href="/posts"
 			class="my-10 block rounded-lg bg-indigo-600 px-4 py-2 text-center text-xl shadow-xl">Posts</a>
 	</div>
-{/if}
+</ThreejsScene>
 
 <style lang="postcss">
 	:global(html) {
 		@apply bg-slate-900 text-gray-100;
-	}
-
-	:global(.invisible) {
-		@apply opacity-0;
 	}
 
 	.link {
