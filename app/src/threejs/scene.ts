@@ -7,8 +7,11 @@ import {
 	FileLoader,
 	LoadingManager,
 	TextureLoader,
-	Color
+	ShaderMaterial
 } from "three";
+
+// ressources
+import { disposeRessources } from "./ressources";
 
 // three js main components
 export let scene: Scene;
@@ -31,7 +34,7 @@ export async function createScene(canvas, init: Function, load: Function) {
 	renderer.physicallyCorrectLights = true;
 	renderer.outputEncoding = sRGBEncoding;
 
-	// scene and loaders
+	// scene and ressources
 	scene = new Scene();
 
 	// camera settings
@@ -39,18 +42,18 @@ export async function createScene(canvas, init: Function, load: Function) {
 	camera.position.z = 5;
 	scene.add(camera);
 
-	// init scene
-	if (init) init();
-
 	// load ressources
 	let loadingManager = new LoadingManager();
 	loadingManager.onProgress = () => console.log("loading..");
 	loadingManager.onLoad = () => console.log("loading finished!");
 
+	// loaders
 	let fileLoader = new FileLoader(loadingManager);
 	let textureLoader = new TextureLoader(loadingManager);
-
 	if (load) load(fileLoader, textureLoader);
+
+	// init scene
+	if (init) init();
 }
 
 export function updateScene(update: Function) {
@@ -71,6 +74,7 @@ export function renderScene() {
 }
 
 export function destroyScene(destroy) {
+	disposeRessources();
 	if (destroy) destroy();
 	renderer.dispose();
 }
