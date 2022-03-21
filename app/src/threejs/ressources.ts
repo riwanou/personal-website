@@ -1,8 +1,9 @@
-import type { BufferGeometry, Mesh, ShaderMaterial } from "three";
+import { type Texture, type BufferGeometry, type Mesh, type ShaderMaterial } from "three";
 
 const loaders = new Map([
 	["geometry", new Map<string, BufferGeometry>()],
 	["material", new Map<string, ShaderMaterial>()],
+	["texture", new Map<string, Texture>()],
 	["shader", new Map<string, any>()],
 	["mesh", new Map<string, Mesh>()]
 ]);

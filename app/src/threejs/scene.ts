@@ -44,13 +44,18 @@ export async function createScene(canvas, init: Function, load: Function) {
 
 	// load ressources
 	let loadingManager = new LoadingManager();
-	loadingManager.onProgress = () => console.log("loading..");
-	loadingManager.onLoad = () => console.log("loading finished!");
 
 	// loaders
 	let fileLoader = new FileLoader(loadingManager);
 	let textureLoader = new TextureLoader(loadingManager);
+	textureLoader.path = "/textures/";
 	if (load) load(fileLoader, textureLoader);
+
+	// init
+	loadingManager.onProgress = () => console.log("loading..");
+	loadingManager.onLoad = () => {
+		console.log("loading finished!");
+	};
 
 	// init scene
 	if (init) init();

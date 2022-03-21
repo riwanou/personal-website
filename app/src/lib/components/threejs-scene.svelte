@@ -56,7 +56,7 @@
 	});
 </script>
 
-<canvas bind:this={canvas} class="invisible absolute top-0 -z-10 transition-opacity duration-500" />
+<canvas bind:this={canvas} class="invisible absolute top-0 transition-opacity duration-500" />
 
 {#if load}
 	<slot />

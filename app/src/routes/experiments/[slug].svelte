@@ -12,7 +12,7 @@
 
 <ThreejsScene {path}>
 	<PageTransition>
-		<div class="flex h-full flex-col justify-between text-black">
+		<div class="pointer-events-none z-10 flex h-full flex-col justify-between text-black">
 			<a id="link" target="_self" href="/experiments">Go back</a>
 			<Footer />
 		</div>
@@ -22,6 +22,6 @@
 <style lang="postcss">
 	#link {
 		@apply p-4 text-center text-xl;
-		@apply transition-transform active:-translate-y-1;
+		@apply pointer-events-auto transition-transform active:-translate-y-1;
 	}
 </style>

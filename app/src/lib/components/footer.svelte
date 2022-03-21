@@ -7,6 +7,6 @@
 <style lang="postcss">
 	footer {
 		@apply flex w-full justify-center pb-5 pt-12;
-		@apply opacity-60;
+		@apply pointer-events-auto opacity-60;
 	}
 </style>
