@@ -53,9 +53,7 @@ export async function createScene(canvas, init: Function, load: Function) {
 
 	// init
 	loadingManager.onProgress = () => console.log("loading..");
-	loadingManager.onLoad = () => {
-		console.log("loading finished!");
-	};
+	loadingManager.onLoad = () => console.log("loading finished!");
 
 	// init scene
 	if (init) init();
