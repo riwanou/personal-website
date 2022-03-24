@@ -66,4 +66,8 @@
 	:global(.invisible) {
 		@apply opacity-0;
 	}
+
+	:global(:not(canvas)) {
+		z-index: 10;
+	}
 </style>

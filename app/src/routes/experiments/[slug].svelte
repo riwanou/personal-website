@@ -12,7 +12,7 @@
 
 <ThreejsScene {path}>
 	<PageTransition>
-		<div class="pointer-events-none z-10 flex h-full flex-col justify-between text-black">
+		<div class="pointer-events-none flex h-full flex-col justify-between text-black">
 			<a id="link" target="_self" href="/experiments">Go back</a>
 			<Footer />
 		</div>

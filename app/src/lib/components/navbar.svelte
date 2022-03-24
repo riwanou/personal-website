@@ -16,7 +16,7 @@
 
 <div id="navbar">
 	<div id="container">
-		<div class="flex gap-5">
+		<div class="flex gap-2 sm:gap-5">
 			<a target="_self" href="/">Home</a>
 			<a href="/posts">Posts</a>
 			<a href="/experiments">Experiments</a>
@@ -34,7 +34,7 @@
 	}
 
 	#container {
-		@apply mx-auto flex max-w-xl px-5;
+		@apply mx-auto flex max-w-xl px-2 sm:px-5;
 		@apply flex items-center justify-between;
 		@apply text-lg;
 	}
