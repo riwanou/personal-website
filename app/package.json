@@ -35,6 +35,7 @@
 	"type": "module",
 	"dependencies": {
 		"@types/three": "^0.137.0",
+		"lil-gui": "^0.16.1",
 		"three": "^0.138.0"
 	}
 }

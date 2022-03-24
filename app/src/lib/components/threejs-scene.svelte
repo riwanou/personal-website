@@ -67,6 +67,10 @@
 		@apply opacity-0;
 	}
 
+	:global(.lil-gui) {
+		@apply h-auto max-h-0;
+	}
+
 	:global(:not(canvas)) {
 		z-index: 10;
 	}

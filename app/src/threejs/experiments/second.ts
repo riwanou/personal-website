@@ -9,11 +9,13 @@ import {
 	AmbientLight,
 	AdditiveBlending,
 	RepeatWrapping,
-	TubeGeometry
+	Vector2
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { scene, camera, renderer, size } from "$threejs/scene";
 import { add, get } from "$threejs/ressources";
+
+import GUI from "lil-gui";
 
 const vertex = `
 	uniform mat4 projectionMatrix;
@@ -43,19 +45,36 @@ precision mediump float;
 
 uniform sampler2D uTexture;
 uniform float uTime;
+uniform float uScale;
+uniform vec2 uSpeed;
+uniform vec3 uColor;
+
 varying vec2 vUv;
 
 void main() {
-  
-  	vec4 textureColor = texture2D(uTexture, vec2(vUv.x + uTime * 0.6, vUv.y + uTime * 0.1));
+	vec2 uv = vUv;
+	uv.x = vUv.x + uTime * uSpeed.x;
+	uv.y = vUv.y + uTime * uSpeed.y;
+  	vec4 textureColor = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
   	gl_FragColor = textureColor;
 }
 `;
 
 let controls: OrbitControls;
+// updatable shader variables
 const uniforms = {
-	uTime: { value: 0 }
+	uTime: { value: 0 },
+	uScale: { value: 1 },
+	uSpeed: { value: new Vector2(0.6, 0.1) },
+	uColor: { value: [1, 1, 1] }
 };
+
+// debug gui
+const gui = new GUI({ container: document.getElementById("debug-gui") });
+gui.add(uniforms.uScale, "value", 0.1, 2).name("texture scale");
+gui.add(uniforms.uSpeed.value, "x", 0.1, 1.5).name("speed x");
+gui.add(uniforms.uSpeed.value, "y", 0.1, 1.5).name("speed y");
+gui.addColor(uniforms.uColor, "value").name("color");
 
 export function load(fileLoader: FileLoader, textureLoader: TextureLoader) {
 	add(
@@ -84,8 +103,9 @@ export function init() {
 
 	// mesh
 	const sides = 30;
-	// const geometry = add("plane", "geometry", new PlaneBufferGeometry(1, 1, sides, sides));
-	const geometry = add("plane", "geometry", new TubeGeometry());
+	const geometry = add("plane", "geometry", new PlaneBufferGeometry(4, 4, sides, sides));
+	// const geometry = add("plane", "geometry", new TubeGeometry());
+	// const geometry = add("plane", "geometry", new CylinderGeometry(1.3, 1.7, 3.5));
 	const material = add(
 		"plane",
 		"material",
