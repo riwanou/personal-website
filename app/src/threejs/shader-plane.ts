@@ -1,23 +1,13 @@
 import {
-	AdditiveBlending,
 	DoubleSide,
 	Mesh,
+	NormalBlending,
 	PlaneBufferGeometry,
 	RawShaderMaterial,
 	type PlaneGeometry,
 	type ShaderMaterial
 } from "three";
 import { add } from "$threejs/ressources";
-
-const constructorObject = {
-	name: "basic-name",
-	nbVertices: 10,
-	blending: AdditiveBlending,
-	vertexVar: "",
-	vertexFunc: "",
-	fragmentVar: "",
-	fragmentFunc: ""
-};
 
 class ShaderPlane {
 	material: ShaderMaterial;
@@ -28,7 +18,17 @@ class ShaderPlane {
 	fragment: string;
 
 	// in init function
-	constructor(constructorObject) {
+	constructor({
+		name = "basic-name",
+		nbVertices = 10,
+		blending = NormalBlending,
+		uniforms = {},
+		vertexVar = "",
+		vertexFunc = "",
+		fragmentVar = "",
+		fragmentFunc = "",
+		material = null
+	}) {
 		// Vertex
 		this.vertex =
 			`
@@ -80,20 +80,24 @@ class ShaderPlane {
         `;
 
 		// Init
-		this.material = add(
-			name,
-			"material",
-			new RawShaderMaterial({
-				vertexShader: this.vertex,
-				fragmentShader: this.fragment,
-				uniforms: {
-					...this.uniforms
-				},
-				side: DoubleSide,
-				transparent: true,
-				blending: blending
-			})
-		);
+		if (material) this.material = material;
+		else {
+			this.uniforms = uniforms;
+			this.material = add(
+				name,
+				"material",
+				new RawShaderMaterial({
+					vertexShader: this.vertex,
+					fragmentShader: this.fragment,
+					uniforms: {
+						...this.uniforms
+					},
+					side: DoubleSide,
+					transparent: true,
+					blending: blending
+				})
+			);
+		}
 		this.geometry = add(name, "geometry", new PlaneBufferGeometry(1, 1, nbVertices, nbVertices));
 		this.mesh = add(name, "mesh", new Mesh(this.geometry, this.material));
 	}

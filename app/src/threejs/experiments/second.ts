@@ -18,71 +18,6 @@ import { ShaderPlane } from "../shader-plane";
 
 import GUI from "lil-gui";
 
-const vertex = `
-	uniform mat4 projectionMatrix;
-    uniform mat4 viewMatrix;
-    uniform mat4 modelMatrix;
-	
-	attribute vec2 uv;
-    attribute vec3 position;
-
-	varying vec2 vUv;
-
-	uniform float uTime;
-
-    void main()
-    {
-        vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-    	vec4 viewPosition = viewMatrix * modelPosition;
-    	vec4 projectedPosition = projectionMatrix * viewPosition;
-
-		vUv = uv;
-    	gl_Position = projectedPosition;
-    }
-`;
-
-// Fragments
-
-const fragmentVar = `
-precision mediump float;
-
-varying vec2 vUv;
-
-uniform float uTime;
-uniform float uScale;
-uniform vec2 uSpeed;
-uniform vec3 uColor;
-`;
-
-const fragment =
-	fragmentVar +
-	`
-uniform sampler2D uTexture;
-
-void main() {
-	vec2 uv = vUv;
-	uv.x = vUv.x + uTime * uSpeed.x;
-	uv.y = vUv.y + uTime * uSpeed.y;
-  	vec4 textureColor = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
-  	gl_FragColor = textureColor;
-}
-`;
-
-const fragment1 =
-	fragmentVar +
-	`
-uniform sampler2D uTexture;
-
-void main() {
-	vec2 uv = vUv;
-	uv.x = vUv.x + uTime * uSpeed.x;
-	uv.y = vUv.y + uTime * uSpeed.y;
-  	vec4 textureColor = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
-  	gl_FragColor = textureColor;
-}
-
-`;
-
 let controls: OrbitControls;
 // updatable shader variables
 const uniforms = {
@@ -125,37 +60,49 @@ export function init() {
 	scene.add(light);
 
 	// mesh
-	const sides = 30;
-	const geometry = add("plane", "geometry", new PlaneBufferGeometry(4, 4, sides, sides));
-	// const geometry = add("plane", "geometry", new TubeGeometry());
-	// const geometry = add("plane", "geometry", new CylinderGeometry(1.3, 1.7, 3.5));
-	const material = add(
-		"plane",
-		"material",
-		new RawShaderMaterial({
-			vertexShader: vertex,
-			fragmentShader: fragment,
-			side: DoubleSide,
-			uniforms: {
-				uTexture: { value: get("circle", "texture") },
-				...uniforms
-			},
-			transparent: true,
-			blending: AdditiveBlending
-		})
-	);
+	const plane = new ShaderPlane({
+		name: "plane",
+		nbVertices: 30,
+		uniforms: uniforms,
+		fragmentVar: `
+			uniform sampler2D uTexture;
+			uniform vec3 uColor;
+			uniform float uScale;
+			uniform vec2 uSpeed;
+		`,
+		fragmentFunc: `
+			uv.x = vUv.x + uTime * uSpeed.x;
+			uv.y = vUv.y + uTime * uSpeed.y;
+  			color = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
+		`
+	});
 
-	const plane = add("plane", "mesh", new Mesh(geometry, material));
+	const plane1 = new ShaderPlane({
+		name: "plane1",
+		material: plane.material
+	});
+	plane1.mesh.position.z = 0.2;
+	plane1.mesh.scale.setScalar(0.5);
 
-	const plane1: Mesh = add("plane1", "mesh", new Mesh(geometry, material));
-	plane1.position.z = 0.2;
-	plane1.scale.setScalar(0.5);
+	scene.add(plane.mesh, plane1.mesh);
 
-	// scene.add(plane, plane1);
-
-	// const superPlane = new ShaderPlane("super-plane", 10, "", "", "", "gl_FragColor = vec4(1.0);");
-	const superPlane = new ShaderPlane({ name: "hello" });
-	console.log(superPlane);
+	const superPlane = new ShaderPlane({
+		name: "super-plane",
+		uniforms: {
+			uTexture: { value: get("circle", "texture") },
+			uColor: uniforms.uColor
+		},
+		fragmentVar: `
+			uniform vec3 uColor;
+			uniform sampler2D uTexture;
+			float scale = 0.5;
+		`,
+		fragmentFunc: `
+  			color = texture2D(uTexture, vec2(uv.x, uv.y) * scale) * vec4(uColor, 1.0);
+			if (color.r < 0.5) discard; 
+		`
+	});
+	superPlane.mesh.position.setZ(0.5);
 	scene.add(superPlane.mesh);
 }
 
