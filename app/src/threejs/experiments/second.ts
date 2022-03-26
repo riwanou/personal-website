@@ -14,6 +14,7 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { scene, camera, renderer, size } from "$threejs/scene";
 import { add, get } from "$threejs/ressources";
+import { ShaderPlane } from "../shader-plane";
 
 import GUI from "lil-gui";
 
@@ -40,16 +41,23 @@ const vertex = `
     }
 `;
 
-const fragment = `
+// Fragments
+
+const fragmentVar = `
 precision mediump float;
 
-uniform sampler2D uTexture;
+varying vec2 vUv;
+
 uniform float uTime;
 uniform float uScale;
 uniform vec2 uSpeed;
 uniform vec3 uColor;
+`;
 
-varying vec2 vUv;
+const fragment =
+	fragmentVar +
+	`
+uniform sampler2D uTexture;
 
 void main() {
 	vec2 uv = vUv;
@@ -58,6 +66,21 @@ void main() {
   	vec4 textureColor = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
   	gl_FragColor = textureColor;
 }
+`;
+
+const fragment1 =
+	fragmentVar +
+	`
+uniform sampler2D uTexture;
+
+void main() {
+	vec2 uv = vUv;
+	uv.x = vUv.x + uTime * uSpeed.x;
+	uv.y = vUv.y + uTime * uSpeed.y;
+  	vec4 textureColor = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
+  	gl_FragColor = textureColor;
+}
+
 `;
 
 let controls: OrbitControls;
@@ -121,8 +144,19 @@ export function init() {
 			blending: AdditiveBlending
 		})
 	);
+
 	const plane = add("plane", "mesh", new Mesh(geometry, material));
-	scene.add(plane);
+
+	const plane1: Mesh = add("plane1", "mesh", new Mesh(geometry, material));
+	plane1.position.z = 0.2;
+	plane1.scale.setScalar(0.5);
+
+	// scene.add(plane, plane1);
+
+	// const superPlane = new ShaderPlane("super-plane", 10, "", "", "", "gl_FragColor = vec4(1.0);");
+	const superPlane = new ShaderPlane({ name: "hello" });
+	console.log(superPlane);
+	scene.add(superPlane.mesh);
 }
 
 export function update(elapsed: number) {
