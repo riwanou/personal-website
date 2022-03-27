@@ -6,12 +6,24 @@ import {
 	RepeatWrapping,
 	Vector2,
 	AdditiveBlending,
-	Group
+	Group,
+	CustomBlending,
+	AddEquation,
+	SrcColorFactor,
+	DstColorFactor,
+	OneFactor,
+	ZeroFactor,
+	OneMinusSrcColorFactor,
+	OneMinusDstColorFactor,
+	NormalBlending,
+	MultiplyBlending,
+	CircleGeometry,
+	SubtractiveBlending
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { scene, camera, renderer, size } from "$threejs/scene";
 import { add, get } from "$threejs/ressources";
-import { ShaderPlane } from "../shader-plane";
+import { ShaderObject } from "$threejs/shader-object";
 
 import GUI from "lil-gui";
 
@@ -50,16 +62,14 @@ export function init() {
 	scene.add(light);
 
 	/* First shader object */
-
 	{
 		const firstObject = new Group();
 		const firstFolder = gui.addFolder("First shader object").close();
 
 		/* First noise plane */
-		const plane = new ShaderPlane({
+		const plane = new ShaderObject({
 			name: "plane",
 			blending: AdditiveBlending,
-			nbVertices: 30,
 			uniforms: {
 				uTexture: { value: get("noise", "texture") },
 				uScale: { value: 1 },
@@ -87,7 +97,7 @@ export function init() {
 		firstObject.add(plane.mesh);
 
 		/* Second noise plane */
-		const plane1 = new ShaderPlane({
+		const plane1 = new ShaderObject({
 			name: "plane1",
 			blending: AdditiveBlending,
 			uniforms: {
@@ -109,7 +119,7 @@ export function init() {
 		firstObject.add(plane1.mesh);
 
 		/* Color plane */
-		const colorPlane = new ShaderPlane({
+		const colorPlane = new ShaderObject({
 			name: "color-plane",
 			uniforms: {
 				uBgColor: { value: [0.4, 0.7, 1.0] }
@@ -126,20 +136,19 @@ export function init() {
 		folder.addColor(colorPlane.uniforms.uBgColor, "value").name("bg-color1");
 		firstObject.add(colorPlane.mesh);
 
-		firstObject.position.setX(-1.1);
+		firstObject.position.set(-0.9, -0.5, 0.0);
 		scene.add(firstObject);
 	}
 
 	/* Second shader object */
-
 	{
 		const secondObject = new Group();
-		const secondFolder = gui.addFolder("Second shader object").open();
+		const secondFolder = gui.addFolder("Second shader object").close();
 
 		/* First plane */
-		const plane = new ShaderPlane({
-			name: "plane",
-			nbVertices: 10,
+		const circle = new ShaderObject({
+			name: "circle",
+			geometry: new CircleGeometry(0.5, 50),
 			uniforms: {
 				uColor: { value: [1.0, 0.7, 0.6] },
 				...uniforms
@@ -148,16 +157,50 @@ export function init() {
 				uniform vec3 uColor;
 			`,
 			fragmentFunc: `
-				// color = vec4(uColor, 1.0);
-				color = vec4(uv, 1.0, 1.0);
+				uv += 0.04;
+				float barX = step(0.8, mod(uv.y * 10.0, 1.0)) * step(0.4, mod(uv.x * 10.0 - 0.2, 1.0));
+				float barY = step(0.8, mod(uv.x * 10.0, 1.0)) * step(0.4, mod(uv.y * 10.0 - 0.2, 1.0));
+				float strength = barX + barY;
+				color = vec4(uColor, strength);
 			`
 		});
-		let folder = secondFolder.addFolder("Noise plane 1");
-		folder.addColor(plane.uniforms.uColor, "value").name("color");
-		secondObject.add(plane.mesh);
+		let folder = secondFolder.addFolder("Plane");
+		folder.addColor(circle.uniforms.uColor, "value").name("color");
+		secondObject.add(circle.mesh);
 
-		secondObject.position.setX(0.4);
+		secondObject.position.set(-0.9, 0.6, 0.0);
 		scene.add(secondObject);
+	}
+
+	/* Third shader object */
+	{
+		const thirdObject = new Group();
+		const thirdFolder = gui.addFolder("Third shader object").open();
+
+		/* First plane */
+		const plane = new ShaderObject({
+			name: "pattern",
+			uniforms: {
+				uColor: { value: [1.0, 0.7, 0.6] },
+				...uniforms
+			},
+			fragmentVar: `
+				uniform vec3 uColor;
+			`,
+			fragmentFunc: `
+				uv += 0.04;
+				float barX = step(0.8, mod(uv.y * 10.0, 1.0)) * step(0.4, mod(uv.x * 10.0 - 0.2, 1.0));
+				float barY = step(0.8, mod(uv.x * 10.0, 1.0)) * step(0.4, mod(uv.y * 10.0 - 0.2, 1.0));
+				float strength = barX + barY;
+				color = vec4(uColor, strength);
+			`
+		});
+		let folder = thirdFolder.addFolder("Plane");
+		folder.addColor(plane.uniforms.uColor, "value").name("color");
+		thirdObject.add(plane.mesh);
+
+		thirdObject.position.set(0.4, 0.0, 0.0);
+		scene.add(thirdObject);
 	}
 }
 

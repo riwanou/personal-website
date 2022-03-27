@@ -1,15 +1,18 @@
 import {
+	BoxGeometry,
+	CircleGeometry,
 	DoubleSide,
 	Mesh,
 	NormalBlending,
 	PlaneBufferGeometry,
 	RawShaderMaterial,
+	SphereGeometry,
 	type PlaneGeometry,
 	type ShaderMaterial
 } from "three";
 import { add } from "$threejs/ressources";
 
-class ShaderPlane {
+class ShaderObject {
 	material: ShaderMaterial;
 	geometry: PlaneGeometry;
 	mesh: Mesh;
@@ -20,10 +23,10 @@ class ShaderPlane {
 	// in init function
 	constructor({
 		name = "basic-name",
-		nbVertices = 10,
+		geometry = null,
 		blending = NormalBlending,
 		blendEquation = null,
-		BlendSrc = null,
+		blendSrc = null,
 		blendDst = null,
 		uniforms = {},
 		vertex = null,
@@ -72,7 +75,7 @@ class ShaderPlane {
 		else
 			this.fragment =
 				`
-        precision mediump float;
+        precision highp float;
         varying vec2 vUv;
         uniform float uTime;
         ` +
@@ -105,14 +108,16 @@ class ShaderPlane {
 					transparent: true,
 					blending: blending,
 					blendEquation: blendEquation,
-					blendSrc: BlendSrc,
+					blendSrc: blendSrc,
 					blendDst: blendDst
 				})
 			);
 		}
-		this.geometry = add(name, "geometry", new PlaneBufferGeometry(1, 1, nbVertices, nbVertices));
+		if (geometry) this.geometry = add(name, "geometry", geometry);
+		else this.geometry = add(name, "geometry", new PlaneBufferGeometry(1, 1, 10, 10));
+		// this.geometry = add(name, "geometry", new CircleGeometry(0.5, 50));
 		this.mesh = add(name, "mesh", new Mesh(this.geometry, this.material));
 	}
 }
 
-export { ShaderPlane };
+export { ShaderObject };
