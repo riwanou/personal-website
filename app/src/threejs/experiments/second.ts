@@ -5,7 +5,8 @@ import {
 	AmbientLight,
 	RepeatWrapping,
 	Vector2,
-	AdditiveBlending
+	AdditiveBlending,
+	Group
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { scene, camera, renderer, size } from "$threejs/scene";
@@ -40,7 +41,7 @@ export function init() {
 
 	// controls
 	controls = new OrbitControls(camera, renderer.domElement);
-	camera.position.z = 1.0;
+	camera.position.z = 1.5;
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.05;
 
@@ -48,79 +49,116 @@ export function init() {
 	const light = new AmbientLight(new Color("red"));
 	scene.add(light);
 
-	/* First noise plane */
+	/* First shader object */
 
-	const plane = new ShaderPlane({
-		name: "plane",
-		blending: AdditiveBlending,
-		nbVertices: 30,
-		uniforms: {
-			uTexture: { value: get("noise", "texture") },
-			uScale: { value: 1 },
-			uSpeed: { value: new Vector2(0.6, 0.1) },
-			uColor: { value: [0.1, 0.1, 0.1] },
-			...uniforms
-		},
-		fragmentVar: `
-			uniform sampler2D uTexture;
-			uniform vec3 uColor;
-			uniform float uScale;
-			uniform vec2 uSpeed;
-		`,
-		fragmentFunc: `
-			uv.x = vUv.x + uTime * uSpeed.x;
-			uv.y = vUv.y + uTime * uSpeed.y;
-  			color = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
-		`
-	});
-	let folder = gui.addFolder("noise-plane-1");
-	folder.add(plane.uniforms.uScale, "value", 0.1, 2).name("texture scale");
-	folder.add(plane.uniforms.uSpeed.value, "y", -1.5, 1.5).name("speed y");
-	folder.add(plane.uniforms.uSpeed.value, "x", -1.5, 1.5).name("speed x");
-	folder.addColor(plane.uniforms.uColor, "value").name("color");
-	scene.add(plane.mesh);
+	{
+		const firstObject = new Group();
+		const firstFolder = gui.addFolder("First shader object").close();
 
-	/* Second noise plane */
+		/* First noise plane */
+		const plane = new ShaderPlane({
+			name: "plane",
+			blending: AdditiveBlending,
+			nbVertices: 30,
+			uniforms: {
+				uTexture: { value: get("noise", "texture") },
+				uScale: { value: 1 },
+				uSpeed: { value: new Vector2(0.6, 0.1) },
+				uColor: { value: [0.1, 0.1, 0.1] },
+				...uniforms
+			},
+			fragmentVar: `
+				uniform sampler2D uTexture;
+				uniform vec3 uColor;
+				uniform float uScale;
+				uniform vec2 uSpeed;
+			`,
+			fragmentFunc: `
+				uv.x = vUv.x + uTime * uSpeed.x;
+				uv.y = vUv.y + uTime * uSpeed.y;
+				color = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
+			`
+		});
+		let folder = firstFolder.addFolder("Noise plane 1");
+		folder.add(plane.uniforms.uScale, "value", 0.1, 2).name("texture scale");
+		folder.add(plane.uniforms.uSpeed.value, "y", -1.5, 1.5).name("speed y");
+		folder.add(plane.uniforms.uSpeed.value, "x", -1.5, 1.5).name("speed x");
+		folder.addColor(plane.uniforms.uColor, "value").name("color");
+		firstObject.add(plane.mesh);
 
-	const plane1 = new ShaderPlane({
-		name: "plane1",
-		blending: AdditiveBlending,
-		uniforms: {
-			uTexture: { value: get("noise", "texture") },
-			uScale: { value: 0.8 },
-			uSpeed: { value: new Vector2(0.2, 0.4) },
-			uColor: { value: [0.1, 0.1, 0.1] }
-		},
-		vertex: plane.vertex,
-		fragment: plane.fragment
-	});
-	folder = gui.addFolder("noise-plane-2");
-	folder.add(plane1.uniforms.uScale, "value", 0.1, 2).name("texture scale");
-	folder.add(plane1.uniforms.uSpeed.value, "y", -1.5, 1.5).name("speed y");
-	folder.add(plane1.uniforms.uSpeed.value, "x", -1.5, 1.5).name("speed x");
-	folder.addColor(plane1.uniforms.uColor, "value").name("color");
-	plane1.mesh.position.z = 0.001;
-	plane1.mesh.scale.setScalar(0.6);
-	scene.add(plane1.mesh);
+		/* Second noise plane */
+		const plane1 = new ShaderPlane({
+			name: "plane1",
+			blending: AdditiveBlending,
+			uniforms: {
+				uTexture: { value: get("noise", "texture") },
+				uScale: { value: 0.8 },
+				uSpeed: { value: new Vector2(0.2, 0.4) },
+				uColor: { value: [0.1, 0.1, 0.1] }
+			},
+			vertex: plane.vertex,
+			fragment: plane.fragment
+		});
+		folder = firstFolder.addFolder("Noise plane 2");
+		folder.add(plane1.uniforms.uScale, "value", 0.1, 2).name("texture scale");
+		folder.add(plane1.uniforms.uSpeed.value, "y", -1.5, 1.5).name("speed y");
+		folder.add(plane1.uniforms.uSpeed.value, "x", -1.5, 1.5).name("speed x");
+		folder.addColor(plane1.uniforms.uColor, "value").name("color");
+		plane1.mesh.position.z = 0.001;
+		plane1.mesh.scale.setScalar(0.6);
+		firstObject.add(plane1.mesh);
 
-	/* Color plane */
+		/* Color plane */
+		const colorPlane = new ShaderPlane({
+			name: "color-plane",
+			uniforms: {
+				uBgColor: { value: [0.4, 0.7, 1.0] }
+			},
+			fragmentVar: `
+				uniform vec3 uBgColor;
+			`,
+			fragmentFunc: `
+				color = vec4(uBgColor, 1.0);
+			`
+		});
+		colorPlane.mesh.position.setZ(-0.001);
+		folder = firstFolder.addFolder("Color plane");
+		folder.addColor(colorPlane.uniforms.uBgColor, "value").name("bg-color1");
+		firstObject.add(colorPlane.mesh);
 
-	const colorPlane = new ShaderPlane({
-		name: "color-plane",
-		uniforms: {
-			uBgColor: { value: [0.4, 0.7, 1.0] }
-		},
-		fragmentVar: `
-			uniform vec3 uBgColor;
-		`,
-		fragmentFunc: `
-			color = vec4(uBgColor, 1.0);
-		`
-	});
-	colorPlane.mesh.position.setZ(-0.001);
-	folder = gui.addFolder("color-plane");
-	folder.addColor(colorPlane.uniforms.uBgColor, "value").name("bg-color1");
-	scene.add(colorPlane.mesh);
+		firstObject.position.setX(-1.1);
+		scene.add(firstObject);
+	}
+
+	/* Second shader object */
+
+	{
+		const secondObject = new Group();
+		const secondFolder = gui.addFolder("Second shader object").open();
+
+		/* First plane */
+		const plane = new ShaderPlane({
+			name: "plane",
+			nbVertices: 10,
+			uniforms: {
+				uColor: { value: [1.0, 0.7, 0.6] },
+				...uniforms
+			},
+			fragmentVar: `
+				uniform vec3 uColor;
+			`,
+			fragmentFunc: `
+				// color = vec4(uColor, 1.0);
+				color = vec4(uv, 1.0, 1.0);
+			`
+		});
+		let folder = secondFolder.addFolder("Noise plane 1");
+		folder.addColor(plane.uniforms.uColor, "value").name("color");
+		secondObject.add(plane.mesh);
+
+		secondObject.position.setX(0.4);
+		scene.add(secondObject);
+	}
 }
 
 export function update(elapsed: number) {
