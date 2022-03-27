@@ -26,6 +26,8 @@ class ShaderPlane {
 		BlendSrc = null,
 		blendDst = null,
 		uniforms = {},
+		vertex = null,
+		fragment = null,
 		vertexVar = "",
 		vertexFunc = "",
 		fragmentVar = "",
@@ -33,8 +35,10 @@ class ShaderPlane {
 		material = null
 	}) {
 		// Vertex
-		this.vertex =
-			`
+		if (vertex) this.vertex = vertex;
+		else
+			this.vertex =
+				`
             uniform mat4 projectionMatrix;
             uniform mat4 viewMatrix;
             uniform mat4 modelMatrix;
@@ -46,8 +50,8 @@ class ShaderPlane {
             varying vec2 vUv;
 
             ` +
-			vertexVar +
-			`
+				vertexVar +
+				`
 
             void main()
             {
@@ -58,26 +62,28 @@ class ShaderPlane {
                 vUv = uv;
                 gl_Position = projectedPosition;
             ` +
-			vertexFunc +
-			`
+				vertexFunc +
+				`
             }
         `;
 
 		// Fragment
-		this.fragment =
-			`
+		if (fragment) this.fragment = fragment;
+		else
+			this.fragment =
+				`
         precision mediump float;
         varying vec2 vUv;
         uniform float uTime;
         ` +
-			fragmentVar +
-			`
+				fragmentVar +
+				`
         void main() {
             vec2 uv = vUv;
             vec4 color = vec4(1.0);
         ` +
-			fragmentFunc +
-			`
+				fragmentFunc +
+				`
             gl_FragColor = color;
         }
         `;

@@ -40,7 +40,7 @@ export function init() {
 
 	// controls
 	controls = new OrbitControls(camera, renderer.domElement);
-	camera.position.z = 4.5;
+	camera.position.z = 1.0;
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.05;
 
@@ -48,7 +48,8 @@ export function init() {
 	const light = new AmbientLight(new Color("red"));
 	scene.add(light);
 
-	// mesh
+	/* First noise plane */
+
 	const plane = new ShaderPlane({
 		name: "plane",
 		blending: AdditiveBlending,
@@ -72,23 +73,37 @@ export function init() {
   			color = texture2D(uTexture, vec2(uv.x, uv.y) * uScale) * vec4(uColor, 1.0);
 		`
 	});
-
-	let folder = gui.addFolder("noise-plane");
+	let folder = gui.addFolder("noise-plane-1");
 	folder.add(plane.uniforms.uScale, "value", 0.1, 2).name("texture scale");
 	folder.add(plane.uniforms.uSpeed.value, "y", -1.5, 1.5).name("speed y");
 	folder.add(plane.uniforms.uSpeed.value, "x", -1.5, 1.5).name("speed x");
 	folder.addColor(plane.uniforms.uColor, "value").name("color");
-
 	scene.add(plane.mesh);
+
+	/* Second noise plane */
 
 	const plane1 = new ShaderPlane({
 		name: "plane1",
-		material: plane.material
+		blending: AdditiveBlending,
+		uniforms: {
+			uTexture: { value: get("noise", "texture") },
+			uScale: { value: 0.8 },
+			uSpeed: { value: new Vector2(0.2, 0.4) },
+			uColor: { value: [0.1, 0.1, 0.1] }
+		},
+		vertex: plane.vertex,
+		fragment: plane.fragment
 	});
+	folder = gui.addFolder("noise-plane-2");
+	folder.add(plane1.uniforms.uScale, "value", 0.1, 2).name("texture scale");
+	folder.add(plane1.uniforms.uSpeed.value, "y", -1.5, 1.5).name("speed y");
+	folder.add(plane1.uniforms.uSpeed.value, "x", -1.5, 1.5).name("speed x");
+	folder.addColor(plane1.uniforms.uColor, "value").name("color");
 	plane1.mesh.position.z = 0.001;
-	plane1.mesh.scale.setScalar(0.5);
-
+	plane1.mesh.scale.setScalar(0.6);
 	scene.add(plane1.mesh);
+
+	/* Color plane */
 
 	const colorPlane = new ShaderPlane({
 		name: "color-plane",
@@ -103,10 +118,8 @@ export function init() {
 		`
 	});
 	colorPlane.mesh.position.setZ(-0.001);
-
 	folder = gui.addFolder("color-plane");
 	folder.addColor(colorPlane.uniforms.uBgColor, "value").name("bg-color1");
-
 	scene.add(colorPlane.mesh);
 }
 
