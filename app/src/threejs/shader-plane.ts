@@ -22,6 +22,9 @@ class ShaderPlane {
 		name = "basic-name",
 		nbVertices = 10,
 		blending = NormalBlending,
+		blendEquation = null,
+		BlendSrc = null,
+		blendDst = null,
 		uniforms = {},
 		vertexVar = "",
 		vertexFunc = "",
@@ -94,7 +97,10 @@ class ShaderPlane {
 					},
 					side: DoubleSide,
 					transparent: true,
-					blending: blending
+					blending: blending,
+					blendEquation: blendEquation,
+					blendSrc: BlendSrc,
+					blendDst: blendDst
 				})
 			);
 		}

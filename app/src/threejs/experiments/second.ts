@@ -1,15 +1,12 @@
 import {
 	Color,
-	DoubleSide,
-	Mesh,
-	PlaneBufferGeometry,
-	RawShaderMaterial,
 	type FileLoader,
 	TextureLoader,
 	AmbientLight,
-	AdditiveBlending,
 	RepeatWrapping,
-	Vector2
+	Vector2,
+	AdditiveBlending,
+	SubtractiveBlending
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { scene, camera, renderer, size } from "$threejs/scene";
@@ -62,6 +59,7 @@ export function init() {
 	// mesh
 	const plane = new ShaderPlane({
 		name: "plane",
+		blending: AdditiveBlending,
 		nbVertices: 30,
 		uniforms: uniforms,
 		fragmentVar: `
@@ -88,6 +86,7 @@ export function init() {
 
 	const superPlane = new ShaderPlane({
 		name: "super-plane",
+		blending: SubtractiveBlending,
 		uniforms: {
 			uTexture: { value: get("circle", "texture") },
 			uColor: uniforms.uColor
@@ -95,11 +94,10 @@ export function init() {
 		fragmentVar: `
 			uniform vec3 uColor;
 			uniform sampler2D uTexture;
-			float scale = 0.5;
+			float scale = 0.2;
 		`,
 		fragmentFunc: `
-  			color = texture2D(uTexture, vec2(uv.x, uv.y) * scale) * vec4(uColor, 1.0);
-			if (color.r < 0.5) discard; 
+  			color = texture2D(uTexture, vec2(uv.x, uv.y) * scale) * vec4(uColor,1.0);
 		`
 	});
 	superPlane.mesh.position.setZ(0.5);
