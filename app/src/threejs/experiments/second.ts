@@ -18,7 +18,8 @@ import {
 	NormalBlending,
 	MultiplyBlending,
 	CircleGeometry,
-	SubtractiveBlending
+	SubtractiveBlending,
+	PlaneGeometry
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { scene, camera, renderer, size } from "$threejs/scene";
@@ -180,6 +181,7 @@ export function init() {
 		/* First plane */
 		const plane = new ShaderObject({
 			name: "pattern",
+			geometry: new PlaneGeometry(1, 1, 40),
 			uniforms: {
 				uColor: { value: [1.0, 0.7, 0.6] },
 				...uniforms
@@ -189,15 +191,28 @@ export function init() {
 			`,
 			fragmentFunc: `
 				uv += 0.04;
-				float barX = step(0.8, mod(uv.y * 10.0, 1.0)) * step(0.4, mod(uv.x * 10.0 - 0.2, 1.0));
-				float barY = step(0.8, mod(uv.x * 10.0, 1.0)) * step(0.4, mod(uv.y * 10.0 - 0.2, 1.0));
-				float strength = barX + barY;
-				color = vec4(uColor, strength);
+				float power = 0.02;
+				float speed =  4.0;
+
+				vec2 waved = vec2(
+					sin(uv.y * 20.0 + uTime * speed) * power,
+					sin(uv.x * 10.0 + uTime) * power
+				);
+				uv += waved;
+
+				float strength = 0.1 / distance(vec2(uv.x, uv.y * 0.5), vec2(0.5, 0.25));
+				vec4 combined = vec4(uColor, strength);
+
+				float bar = 1.0 - abs(uv.x - 0.5) * 3.0;
+				combined.a *= bar;
+
+				color = combined;
 			`
 		});
 		let folder = thirdFolder.addFolder("Plane");
 		folder.addColor(plane.uniforms.uColor, "value").name("color");
 		thirdObject.add(plane.mesh);
+		plane.mesh.renderOrder = 1;
 
 		thirdObject.position.set(0.4, 0.0, 0.0);
 		scene.add(thirdObject);

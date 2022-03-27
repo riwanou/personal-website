@@ -58,15 +58,16 @@ class ShaderObject {
 
             void main()
             {
-                vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+				vec3 pos = position;
+				` +
+				vertexFunc +
+				`
+                vec4 modelPosition = modelMatrix * vec4(pos, 1.0);
                 vec4 viewPosition = viewMatrix * modelPosition;
                 vec4 projectedPosition = projectionMatrix * viewPosition;
 
                 vUv = uv;
                 gl_Position = projectedPosition;
-            ` +
-				vertexFunc +
-				`
             }
         `;
 
