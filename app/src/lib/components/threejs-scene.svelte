@@ -68,7 +68,7 @@
 	}
 
 	:global(.lil-gui) {
-		@apply h-auto max-h-0;
+		@apply h-auto max-h-min;
 	}
 
 	:global(:not(canvas)) {
