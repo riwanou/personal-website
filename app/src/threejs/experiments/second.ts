@@ -176,7 +176,7 @@ export function init() {
 	/* Third shader object */
 	{
 		const thirdObject = new Group();
-		const thirdFolder = gui.addFolder("Third shader object").open();
+		const thirdFolder = gui.addFolder("Third shader object").close();
 
 		/* First plane */
 		const plane = new ShaderObject({
@@ -220,7 +220,7 @@ export function init() {
 	/* Fourth shader object */
 	{
 		const fourthObject = new Group();
-		const fourthFolder = gui.addFolder("Fourth shader object").close();
+		const fourthFolder = gui.addFolder("Fourth shader object").open();
 
 		/* First plane */
 		const plane = new ShaderObject({
@@ -239,10 +239,10 @@ export function init() {
 				uniform float uRotation;
 			`,
 			fragmentFunc: `
-				uv = rotate(uv, PI * uRotation, vec2(0.5));
+				uv = rotate(uv, PI * uRotation + uTime * 0.5, vec2(0.5));
 				float strength = uSize / distance(vec2(uv.x, (uv.y - 0.5) * uFactor + 0.5), vec2(0.5)); 
 				strength *= uSize / distance(vec2((uv.x - 0.5) * uFactor + 0.5, uv.y), vec2(0.5)); 
-				strength = step(0.2, strength);
+				strength = smoothstep(0.1, 0.4, strength);
 				color = vec4(uColor, strength);
 			`
 		});
