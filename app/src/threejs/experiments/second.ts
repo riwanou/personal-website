@@ -192,11 +192,11 @@ export function init() {
 			fragmentFunc: `
 				uv += 0.04;
 				float power = 0.02;
-				float speed =  4.0;
+				float speed = 10.0;
 
 				vec2 waved = vec2(
 					sin(uv.y * 20.0 + uTime * speed) * power,
-					sin(uv.x * 10.0 + uTime) * power
+					sin(uv.x * 20.0 + uTime) * power
 				);
 				uv += waved;
 
@@ -214,8 +214,47 @@ export function init() {
 		thirdObject.add(plane.mesh);
 		plane.mesh.renderOrder = 1;
 
-		thirdObject.position.set(0.4, 0.0, 0.0);
+		thirdObject.position.set(1.4, -0.3, 0.0);
 		scene.add(thirdObject);
+	}
+	/* Fourth shader object */
+	{
+		const fourthObject = new Group();
+		const fourthFolder = gui.addFolder("Fourth shader object").close();
+
+		/* First plane */
+		const plane = new ShaderObject({
+			name: "last",
+			uniforms: {
+				uColor: { value: [0.7, 1.0, 0.6] },
+				uSize: { value: 0.4 },
+				uFactor: { value: 10.0 },
+				uRotation: { value: 0.0 },
+				...uniforms
+			},
+			fragmentVar: `
+				uniform vec3 uColor;
+				uniform float uSize;
+				uniform float uFactor;
+				uniform float uRotation;
+			`,
+			fragmentFunc: `
+				uv = rotate(uv, PI * uRotation, vec2(0.5));
+				float strength = uSize / distance(vec2(uv.x, (uv.y - 0.5) * uFactor + 0.5), vec2(0.5)); 
+				strength *= uSize / distance(vec2((uv.x - 0.5) * uFactor + 0.5, uv.y), vec2(0.5)); 
+				strength = step(0.2, strength);
+				color = vec4(uColor, strength);
+			`
+		});
+		let folder = fourthFolder.addFolder("Plane");
+		folder.addColor(plane.uniforms.uColor, "value").name("color");
+		folder.add(plane.uniforms.uSize, "value", 0.01, 2.0).name("size");
+		folder.add(plane.uniforms.uFactor, "value", 0.01, 20.0).name("factor");
+		folder.add(plane.uniforms.uRotation, "value", 0.0, 2.0).name("rotation");
+		fourthObject.add(plane.mesh);
+
+		fourthObject.position.set(0.3, 0.0, 0.0);
+		scene.add(fourthObject);
 	}
 }
 
