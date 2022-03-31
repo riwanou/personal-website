@@ -17,7 +17,7 @@ const uniform = { uTime: { value: 0 } };
 
 export function init() {
 	// renderer
-	renderer.setClearColor(new Color("#F1948A"));
+	renderer.setClearColor(new Color("#0F172A"));
 
 	// lights
 	const ambientLight = new AmbientLight(0xffffff, 0.5);

@@ -1,12 +1,9 @@
 import {
-	BoxGeometry,
-	CircleGeometry,
 	DoubleSide,
 	Mesh,
 	NormalBlending,
 	PlaneBufferGeometry,
 	RawShaderMaterial,
-	SphereGeometry,
 	type PlaneGeometry,
 	type ShaderMaterial
 } from "three";

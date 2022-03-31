@@ -73,5 +73,6 @@
 
 	:global(:not(canvas)) {
 		z-index: 10;
+		@apply text-gray-100;
 	}
 </style>

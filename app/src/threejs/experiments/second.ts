@@ -7,18 +7,7 @@ import {
 	Vector2,
 	AdditiveBlending,
 	Group,
-	CustomBlending,
-	AddEquation,
-	SrcColorFactor,
-	DstColorFactor,
-	OneFactor,
-	ZeroFactor,
-	OneMinusSrcColorFactor,
-	OneMinusDstColorFactor,
-	NormalBlending,
-	MultiplyBlending,
 	CircleGeometry,
-	SubtractiveBlending,
 	PlaneGeometry
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -50,7 +39,7 @@ export function load(fileLoader: FileLoader, textureLoader: TextureLoader) {
 
 export function init() {
 	// renderer
-	renderer.setClearColor(new Color("gray"));
+	renderer.setClearColor(new Color("#0F172A"));
 
 	// controls
 	controls = new OrbitControls(camera, renderer.domElement);

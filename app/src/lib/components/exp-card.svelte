@@ -7,7 +7,6 @@
 <a
 	href={"experiments/" + experiment.path}
 	id="card"
-	sveltekit:prefetch
 	class="shadow-lg dark:shadow-slate-800"
 	in:fly={{ duration: 800, x: 10, delay: delay * 200 }}>
 	<img src={experiment.image} alt={experiment.name + " background"} />
