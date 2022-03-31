@@ -4,8 +4,8 @@ import {
 	NormalBlending,
 	PlaneBufferGeometry,
 	RawShaderMaterial,
-	type PlaneGeometry,
-	type ShaderMaterial
+	ShaderMaterial,
+	type PlaneGeometry
 } from "three";
 import { add } from "$threejs/ressources";
 
