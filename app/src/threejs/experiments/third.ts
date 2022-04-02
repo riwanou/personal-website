@@ -1,4 +1,5 @@
 import {
+	AdditiveBlending,
 	AmbientLight,
 	BufferGeometry,
 	Color,
@@ -6,7 +7,6 @@ import {
 	LinearInterpolant,
 	NormalBlending,
 	Points,
-	RepeatWrapping,
 	ShaderMaterial,
 	Vector3,
 	type FileLoader,
@@ -17,6 +17,7 @@ import { add, get } from "$threejs/ressources";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import GUI from "lil-gui";
+import { set_custom_element_data } from "svelte/internal";
 const gui = new GUI({ container: document.getElementById("debug-gui") });
 
 let controls: OrbitControls;
@@ -30,43 +31,42 @@ export function load(fileLoader: FileLoader, textureLoader: TextureLoader) {
 
 class Spline {
 	interpolant: LinearInterpolant;
-	result: number[];
 
 	constructor(times: number[], values: number[], sampleValues: number) {
-		this.result = [];
-		this.interpolant = new LinearInterpolant(times, values, sampleValues, this.result);
+		this.interpolant = new LinearInterpolant(times, values, sampleValues, []);
 	}
 
 	get(t: number): number[] {
-		this.interpolant.evaluate(t);
-		return this.result;
+		return this.interpolant.evaluate(t);
 	}
 }
 
 let particles = [];
 const geometry = new BufferGeometry();
-const alphaSpline = new Spline([0.9, 1], [1, 0], 1);
+const alphaSpline = new Spline([0, 0.05, 0.85, 1], [0, 1, 1, 0], 1);
 const colorSpline = new Spline(
 	[0, 0.5, 1.0],
 	[...new Color("blue").toArray(), ...new Color("red").toArray(), ...new Color("green").toArray()],
 	3
 );
+const sizeSpline = new Spline([0, 0.2, 0.5, 1.0], [0.1, 2, 6, 0.8], 1);
 
 function addParticles() {
 	for (let i = 0; i < 10; i++) {
-		const life = 10;
+		const life = 5;
 		particles.push({
 			position: new Vector3(
-				Math.random() * 2 - 1,
-				Math.random() * 2 - 1,
-				Math.random() * 2 - 1
+				(Math.random() * 2 - 1) * 0.2,
+				Math.random() * 2 - 5,
+				(Math.random() * 2 - 1) * 0.2
 			).multiplyScalar(0.3),
 			size: (Math.random() * 0.5 + 0.5) * 2.0,
 			color: new Color(),
 			alpha: 1.0,
 			life: life,
 			lifetime: life,
-			rotation: Math.random() * 2.0 * Math.PI
+			rotation: Math.random() * 2.0 * Math.PI,
+			velocity: new Vector3(0, 0.5, 0)
 		});
 	}
 }
@@ -77,9 +77,11 @@ function updateParticles(elapsed) {
 
 	for (let p of particles) {
 		const t = 1.0 - p.life / p.lifetime;
-		p.alpha = alphaSpline.get(t);
+		p.alpha = alphaSpline.get(t)[0];
+		p.rotation += elapsed;
 		p.color = new Color(...colorSpline.get(t));
-		p.rotation += elapsed * 0.1;
+		p.position.add(p.velocity.clone().multiplyScalar(elapsed));
+		p.size = sizeSpline.get(t)[0];
 	}
 
 	particles.sort((a, b) => {
@@ -116,12 +118,12 @@ function updateGeometry() {
 
 export function init() {
 	// renderer
-	// renderer.setClearColor(new Color("#0F172A"));
-	renderer.setClearColor(new Color("skyblue"));
+	renderer.setClearColor(new Color("#0F172A"));
+	// renderer.setClearColor(new Color("skyblue"));
 
 	// controls
 	controls = new OrbitControls(camera, renderer.domElement);
-	camera.position.z = 2.5;
+	camera.position.z = 3.5;
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.05;
 
@@ -133,7 +135,7 @@ export function init() {
 	const folder = gui.addFolder("First object").open();
 	const material = new ShaderMaterial({
 		uniforms: {
-			uPointMultiplier: { value: 300 },
+			uPointMultiplier: { value: 200 },
 			uTexture: { value: get("noise", "texture") },
 			...uniforms
 		},
@@ -177,20 +179,29 @@ export function init() {
 		depthWrite: false,
 		depthTest: true,
 		vertexColors: true,
-		blending: NormalBlending
+		blending: AdditiveBlending
 	});
 
 	// particles
 	const points = new Points(geometry, material);
 
+	// gui
+	const colors = { first: [0, 0, 1], second: [1, 0, 0], third: [0, 1, 0] };
+	folder.addColor(colors, "first");
+	folder.addColor(colors, "second");
+	folder.addColor(colors, "third");
+	folder.onChange((event) => {
+		colorSpline.interpolant.sampleValues = [...colors.first, ...colors.second, ...colors.third];
+	});
+
 	// add
-	addParticles();
+	setInterval(addParticles, 300);
 	updateGeometry();
 	scene.add(points);
 }
 
 function step(elapsed) {
-	updateParticles(elapsed * 0.01);
+	updateParticles(elapsed);
 	updateGeometry();
 }
 

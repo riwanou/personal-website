@@ -59,7 +59,7 @@ export async function createScene(canvas, init: Function, load: Function) {
 }
 
 export function updateScene(update: Function) {
-	const elapsed = clock.getElapsedTime();
+	const elapsed = clock.getDelta();
 	if (update) update(elapsed);
 }
 
