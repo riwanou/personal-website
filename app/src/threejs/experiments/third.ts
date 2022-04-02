@@ -1,10 +1,14 @@
 import {
 	AmbientLight,
-	BufferAttribute,
 	BufferGeometry,
 	Color,
+	Float32BufferAttribute,
+	LinearInterpolant,
+	NormalBlending,
 	Points,
+	RepeatWrapping,
 	ShaderMaterial,
+	Vector3,
 	type FileLoader,
 	type TextureLoader
 } from "three";
@@ -20,15 +24,105 @@ const uniforms = {
 	uTime: { value: 0 }
 };
 
-export function load(fileLoader: FileLoader, textureLoader: TextureLoader) {}
+export function load(fileLoader: FileLoader, textureLoader: TextureLoader) {
+	add(
+		"noise",
+		"texture",
+		textureLoader.load("particles/smoke_01.png", (t) => {
+			t.wrapS = RepeatWrapping;
+			t.wrapT = RepeatWrapping;
+		})
+	);
+}
+
+class Spline {
+	interpolant: LinearInterpolant;
+	result: number[];
+
+	constructor(times: number[], values: number[], sampleValues: number) {
+		this.result = [];
+		this.interpolant = new LinearInterpolant(times, values, sampleValues, this.result);
+	}
+
+	get(t: number): number[] {
+		this.interpolant.evaluate(t);
+		return this.result;
+	}
+}
+
+let particles = [];
+const geometry = new BufferGeometry();
+const alphaSpline = new Spline([0.9, 1], [1, 0], 1);
+const colorSpline = new Spline(
+	[0, 0.5, 1.0],
+	[...new Color("blue").toArray(), ...new Color("red").toArray(), ...new Color("green").toArray()],
+	3
+);
+
+function addParticles() {
+	for (let i = 0; i < 10; i++) {
+		const life = 5;
+		particles.push({
+			position: new Vector3(
+				Math.random() * 2 - 1,
+				Math.random() * 2 - 1,
+				Math.random() * 2 - 1
+			).multiplyScalar(0.3),
+			size: (Math.random() * 0.5 + 0.5) * 2.0,
+			color: new Color(),
+			alpha: 1.0,
+			life: life,
+			lifetime: life
+		});
+	}
+}
+
+function updateParticles(elapsed) {
+	for (let p of particles) p.life -= elapsed;
+	particles = particles.filter((p) => p.life > 0.0);
+
+	for (let p of particles) {
+		const t = 1.0 - p.life / p.lifetime;
+		p.alpha = alphaSpline.get(t);
+		p.color = new Color(...colorSpline.get(t));
+	}
+
+	particles.sort((a, b) => {
+		const d1 = camera.position.distanceToSquared(a.position);
+		const d2 = camera.position.distanceToSquared(b.position);
+		if (d1 > d2) return -1;
+		if (d1 < d2) return 1;
+		return 0;
+	});
+}
+
+function updateGeometry() {
+	const positions = [];
+	const sizes = [];
+	const colors = [];
+
+	for (const p of particles) {
+		positions.push(p.position.x, p.position.y, p.position.z);
+		sizes.push(p.size);
+		colors.push(p.color.r, p.color.g, p.color.b, p.alpha);
+	}
+
+	geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+	geometry.setAttribute("size", new Float32BufferAttribute(sizes, 1));
+	geometry.setAttribute("color", new Float32BufferAttribute(colors, 4));
+	geometry.attributes.position.needsUpdate = true;
+	geometry.attributes.size.needsUpdate = true;
+	geometry.attributes.color.needsUpdate = true;
+}
 
 export function init() {
 	// renderer
-	renderer.setClearColor(new Color("#0F172A"));
+	// renderer.setClearColor(new Color("#0F172A"));
+	renderer.setClearColor(new Color("skyblue"));
 
 	// controls
 	controls = new OrbitControls(camera, renderer.domElement);
-	camera.position.z = 1.5;
+	camera.position.z = 2.5;
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.05;
 
@@ -41,80 +135,69 @@ export function init() {
 	const material = new ShaderMaterial({
 		uniforms: {
 			uColor: { value: [1.0, 0.5, 0.6] },
-			uSize: { value: 60.0 * renderer.getPixelRatio() },
+			uPointMultiplier: { value: 300 },
+			uTexture: { value: get("noise", "texture") },
 			...uniforms
 		},
 		vertexShader: `
-			attribute float aScale;
-			uniform float uSize;
+			attribute float size;
+
+			uniform float uPointMultiplier;
 			uniform float uTime;
-			varying vec2 vUv;
+
+			varying vec4 vColor;
 
 			void main()
 			{
 				// position
-				vec3 pos = position;
-				pos.x += cos(uTime * pos.y * aScale * 0.2) * 0.1;
-				pos.y -= sin(uTime * pos.x * aScale * 0.11) * 0.12;
-
-
-				vec4 modelPosition = modelMatrix * vec4(pos, 1.0);
-				vec4 viewPosition = viewMatrix * modelPosition;
-				vec4 projectedPosition = projectionMatrix * viewPosition;
-				gl_Position = projectedPosition;
+				vec4 modelPosition = modelViewMatrix * vec4(position, 1.0);
+				gl_Position = projectionMatrix * modelPosition;
 
 				// size
-				gl_PointSize = uSize * aScale;
-				gl_PointSize *= (1.0 / - viewPosition.z);
+				gl_PointSize = size * uPointMultiplier / gl_Position.w;
 
-				vUv = uv;
+				// color
+				vColor = color;
 			}
 		`,
 		fragmentShader: `
 			uniform vec3 uColor;
-			varying vec2 vUv;
+			uniform sampler2D uTexture;
+
+			varying vec4 vColor;
 
 			void main() 
 			{
-				float strength = distance(gl_PointCoord, vec2(0.5));
-				strength = 1.0 - strength;
-				strength = smoothstep(0.5, 1.0, strength);
-				gl_FragColor = vec4(uColor, strength);
+				gl_FragColor = texture2D(uTexture, gl_PointCoord) * vColor;
 			}
 		`,
 		transparent: true,
+		depthWrite: false,
 		depthTest: true,
-		depthWrite: false
+		vertexColors: true,
+		blending: NormalBlending
 	});
 	let sub = folder.addFolder("Plane");
 	sub.addColor(material.uniforms.uColor, "value").name("color");
-	sub.add(material.uniforms.uSize, "value", 1.0, 200.0).name("size");
 
 	// particles
-	const geometry = new BufferGeometry();
-	const count = 5000;
-	const distance = 30;
-
-	// attributes
-	const positions = new Float32Array(count * 3);
-	const scales = new Float32Array(count * 1);
-	for (let i = 0; i < count; i++) {
-		positions[i * 3] = (Math.random() - 0.5) * distance;
-		positions[i * 3 + 1] = (Math.random() - 0.5) * distance;
-		positions[i * 3 + 2] = (Math.random() - 0.5) * distance;
-		scales[i] = Math.random() * 2;
-	}
+	const points = new Points(geometry, material);
 
 	// add
-	geometry.setAttribute("position", new BufferAttribute(positions, 3));
-	geometry.setAttribute("aScale", new BufferAttribute(scales, 1));
-	const points = new Points(geometry, material);
+	addParticles();
+	updateGeometry();
 	scene.add(points);
+}
+
+function step(elapsed) {
+	updateParticles(elapsed * 0.01);
+	updateGeometry();
 }
 
 export function update(elapsed: number) {
 	uniforms.uTime.value = elapsed;
 	controls.update();
+	step(elapsed);
 }
 
 export function resize(width: number, height: number) {}

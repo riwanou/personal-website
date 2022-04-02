@@ -6,8 +6,7 @@ import {
 	sRGBEncoding,
 	FileLoader,
 	LoadingManager,
-	TextureLoader,
-	ShaderMaterial
+	TextureLoader
 } from "three";
 
 // ressources
@@ -38,7 +37,7 @@ export async function createScene(canvas, init: Function, load: Function) {
 	scene = new Scene();
 
 	// camera settings
-	camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+	camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
 	camera.position.z = 5;
 	scene.add(camera);
 
