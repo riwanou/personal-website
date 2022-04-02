@@ -25,14 +25,7 @@ const uniforms = {
 };
 
 export function load(fileLoader: FileLoader, textureLoader: TextureLoader) {
-	add(
-		"noise",
-		"texture",
-		textureLoader.load("particles/smoke_01.png", (t) => {
-			t.wrapS = RepeatWrapping;
-			t.wrapT = RepeatWrapping;
-		})
-	);
+	add("noise", "texture", textureLoader.load("particles/smoke_01.png"));
 }
 
 class Spline {
@@ -61,7 +54,7 @@ const colorSpline = new Spline(
 
 function addParticles() {
 	for (let i = 0; i < 10; i++) {
-		const life = 5;
+		const life = 10;
 		particles.push({
 			position: new Vector3(
 				Math.random() * 2 - 1,
@@ -72,7 +65,8 @@ function addParticles() {
 			color: new Color(),
 			alpha: 1.0,
 			life: life,
-			lifetime: life
+			lifetime: life,
+			rotation: Math.random() * 2.0 * Math.PI
 		});
 	}
 }
@@ -85,6 +79,7 @@ function updateParticles(elapsed) {
 		const t = 1.0 - p.life / p.lifetime;
 		p.alpha = alphaSpline.get(t);
 		p.color = new Color(...colorSpline.get(t));
+		p.rotation += elapsed * 0.1;
 	}
 
 	particles.sort((a, b) => {
@@ -100,19 +95,23 @@ function updateGeometry() {
 	const positions = [];
 	const sizes = [];
 	const colors = [];
+	const angles = [];
 
 	for (const p of particles) {
 		positions.push(p.position.x, p.position.y, p.position.z);
 		sizes.push(p.size);
 		colors.push(p.color.r, p.color.g, p.color.b, p.alpha);
+		angles.push(p.rotation);
 	}
 
 	geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
 	geometry.setAttribute("size", new Float32BufferAttribute(sizes, 1));
 	geometry.setAttribute("color", new Float32BufferAttribute(colors, 4));
+	geometry.setAttribute("angle", new Float32BufferAttribute(angles, 1));
 	geometry.attributes.position.needsUpdate = true;
 	geometry.attributes.size.needsUpdate = true;
 	geometry.attributes.color.needsUpdate = true;
+	geometry.attributes.angle.needsUpdate = true;
 }
 
 export function init() {
@@ -134,18 +133,19 @@ export function init() {
 	const folder = gui.addFolder("First object").open();
 	const material = new ShaderMaterial({
 		uniforms: {
-			uColor: { value: [1.0, 0.5, 0.6] },
 			uPointMultiplier: { value: 300 },
 			uTexture: { value: get("noise", "texture") },
 			...uniforms
 		},
 		vertexShader: `
 			attribute float size;
+			attribute float angle;
 
 			uniform float uPointMultiplier;
 			uniform float uTime;
 
 			varying vec4 vColor;
+			varying vec2 vAngle;
 
 			void main()
 			{
@@ -156,19 +156,21 @@ export function init() {
 				// size
 				gl_PointSize = size * uPointMultiplier / gl_Position.w;
 
-				// color
+				// to fragment shader
+				vAngle = vec2(cos(angle), sin(angle));
 				vColor = color;
 			}
 		`,
 		fragmentShader: `
-			uniform vec3 uColor;
 			uniform sampler2D uTexture;
 
 			varying vec4 vColor;
+			varying vec2 vAngle;
 
 			void main() 
 			{
-				gl_FragColor = texture2D(uTexture, gl_PointCoord) * vColor;
+				vec2 coords = (gl_PointCoord - 0.5) * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x) + 0.5;
+				gl_FragColor = texture2D(uTexture, coords) * vColor;
 			}
 		`,
 		transparent: true,
@@ -177,8 +179,6 @@ export function init() {
 		vertexColors: true,
 		blending: NormalBlending
 	});
-	let sub = folder.addFolder("Plane");
-	sub.addColor(material.uniforms.uColor, "value").name("color");
 
 	// particles
 	const points = new Points(geometry, material);
