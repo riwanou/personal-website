@@ -12,6 +12,9 @@ const uniforms = {
 	uTime: { value: 0 }
 };
 
+// particles
+let emitter: Emitter;
+
 export function load(fileLoader: FileLoader, textureLoader: TextureLoader) {}
 
 export function init() {
@@ -32,12 +35,14 @@ export function init() {
 	// const folder = gui.addFolder("First object").close();
 
 	// basic implementation of particle system
-	const emitter = new Emitter();
+	emitter = new Emitter(10);
 }
 
 export function update(elapsed: number, dt: number) {
 	uniforms.uTime.value = dt;
 	controls.update();
+	// particles
+	emitter.update(dt);
 }
 
 export function resize(width: number, height: number) {}
