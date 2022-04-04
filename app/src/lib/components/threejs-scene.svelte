@@ -15,6 +15,7 @@
 			(path === "bubble" && (await import("$threejs/experiments/bubble"))) ||
 			(path === "second" && (await import("$threejs/experiments/second"))) ||
 			(path === "third" && (await import("$threejs/experiments/third"))) ||
+			(path === "fourth" && (await import("$threejs/experiments/fourth"))) ||
 			(await import("$threejs/experiments/second"));
 
 		// handle resizing of browser window

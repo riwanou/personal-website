@@ -1,7 +1,7 @@
 ---
 title: "Second"
 summary: "the second post"
-date: "Thu 24, 2022"
+date: "Feb 24, 2022"
 slug: "second"
 ---
 

@@ -1,0 +1,22 @@
+---
+title: "Learning Particle System"
+summary: "Trying hard to implement a particle system"
+date: "Apr 4, 2022"
+slug: "particle-system"
+---
+
+# Learning Particle System
+
+## Introduction
+
+Welcome to my first post where I will try to show you how I got a simple particle system working with **threejs**.
+Before starting, we need to understand what we want and need.
+In my case, my objective is to be able to render basic effects like basic exmplosion or fire, that's why I will in this post only focus on simple implementation.
+
+---
+
+## Architecture
+
+- Particle
+- Particle Emitter
+- Particle System

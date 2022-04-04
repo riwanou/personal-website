@@ -71,7 +71,7 @@ const colorSpline = new Spline(
 );
 const sizeSpline = new Spline([0, 0.2, 0.5, 1.0], [0.1, 2, 6, 0.8], 1);
 
-const PARTICLE_SPAWN_TIME = 0.5;
+const PARTICLE_SPAWN_TIME = 0.2;
 
 function addParticles() {
 	for (let i = 0; i < 10; i++) {
