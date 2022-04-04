@@ -19,7 +19,7 @@
 
 <PageTransition>
 	<h1 class="mt-5 text-center text-6xl">Posts</h1>
-	<div class="flex h-full flex-col justify-between">
+	<div class="flex flex-col justify-between">
 		<div class="m-1 mt-14 flex flex-col justify-center gap-3">
 			{#if show}
 				{#each posts as { title, slug, summary, date }, i}

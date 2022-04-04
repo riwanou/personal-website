@@ -7,7 +7,7 @@
 <slot />
 
 <style lang="postcss">
-	:global(html, body, body > div) {
+	:global(html, body, body div div) {
 		@apply h-full;
 	}
 </style>

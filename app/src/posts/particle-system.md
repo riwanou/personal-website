@@ -9,9 +9,9 @@ slug: "particle-system"
 
 ## Introduction
 
-Welcome to my first post where I will try to show you how I got a simple particle system working with **threejs**.
-Before starting, we need to understand what we want and need.
-In my case, my objective is to be able to render basic effects like basic exmplosion or fire, that's why I will in this post only focus on simple implementation.
+Welcome to my first post where I will try to show you how I got a simple particle system up and running with **threejs**.
+Before starting, we first need to understand what we want and need.
+In my case, my objective is to be able to render basic effects like basic exmplosion or fire, that's why I will here only focus on simple implementation.
 
 ---
 
