@@ -1,5 +1,5 @@
-# personal-website
+# My personal website
 
-Personal website using svelte-kit for the web app and nginx as proxy.
-Everything is containerize and run by docker compose on an ubuntu virtual machine.
-Also, github actions are used to build and push docker packages to github container registry.
+My personal website using **svelte-kit** and **threejs**. <br />
+I put some of my rendering experiments and hopefully will start to write posts to help people. <br />
+Everything is still in early development, but feel free to take whatever inspirations you want 😊.
