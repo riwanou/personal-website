@@ -23,7 +23,6 @@ In my case, my objective is to be able to render basic effects like basic exmplo
 
 ## Reference
 
-nintervik - [2D Particle System](https://nintervik.github.io/2D-Particle-System/)
+nintervik - [2D Particle System](https://nintervik.github.io/2D-Particle-System/) <br />
 alextardif - [CPU Particles Systems](https://alextardif.com/Particles.html) <br />
-raywenderlich - [OpenGL ES Particle System Tutorial](https://www.raywenderlich.com/2704-opengl-es-particle-system-tutorial-part-1-3) <br />
 simondev - [Quick 3D MMORPG](https://github.com/simondevyoutube/Quick_3D_MMORPG)
