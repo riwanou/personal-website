@@ -33,7 +33,7 @@
 
 <style lang="postcss">
 	#wrapper {
-		@apply mx-auto grid gap-4 px-10;
+		@apply mx-auto grid h-fit gap-4 px-10;
 		@apply sm:max-w-2xl lg:max-w-screen-lg xl:max-w-screen-xl;
 		@apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
 	}

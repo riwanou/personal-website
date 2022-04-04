@@ -7,7 +7,10 @@
 <slot />
 
 <style lang="postcss">
-	:global(html, body, body div div) {
-		@apply h-full;
+	:global(html, body, body > div) {
+		@apply h-full w-full;
+		content: "";
+		display: table;
+		clear: both;
 	}
 </style>
