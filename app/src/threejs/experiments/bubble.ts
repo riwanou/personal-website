@@ -67,7 +67,7 @@ export function init() {
 	scene.add(sphere);
 }
 
-export function update(elapsed: number) {
+export function update(elapsed: number, dt: number) {
 	uniform.uTime.value = elapsed;
 }
 

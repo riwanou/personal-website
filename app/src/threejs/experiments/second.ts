@@ -247,7 +247,7 @@ export function init() {
 	}
 }
 
-export function update(elapsed: number) {
+export function update(elapsed: number, dt: number) {
 	uniforms.uTime.value = elapsed;
 	controls.update();
 }

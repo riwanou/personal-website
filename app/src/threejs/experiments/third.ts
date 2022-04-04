@@ -17,7 +17,6 @@ import { add, get } from "$threejs/ressources";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import GUI from "lil-gui";
-import { set_custom_element_data } from "svelte/internal";
 const gui = new GUI({ container: document.getElementById("debug-gui") });
 
 let controls: OrbitControls;
@@ -71,16 +70,16 @@ function addParticles() {
 	}
 }
 
-function updateParticles(elapsed) {
-	for (let p of particles) p.life -= elapsed;
+function updateParticles(dt) {
+	for (let p of particles) p.life -= dt;
 	particles = particles.filter((p) => p.life > 0.0);
 
 	for (let p of particles) {
 		const t = 1.0 - p.life / p.lifetime;
 		p.alpha = alphaSpline.get(t)[0];
-		p.rotation += elapsed;
+		p.rotation += dt;
 		p.color = new Color(...colorSpline.get(t));
-		p.position.add(p.velocity.clone().multiplyScalar(elapsed));
+		p.position.add(p.velocity.clone().multiplyScalar(dt));
 		p.size = sizeSpline.get(t)[0];
 	}
 
@@ -152,11 +151,11 @@ export function init() {
 			void main()
 			{
 				// position
-				vec4 modelPosition = modelViewMatrix * vec4(position, 1.0);
-				gl_Position = projectionMatrix * modelPosition;
+				vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+				gl_Position = projectionMatrix * mvPosition;
 
 				// size
-				gl_PointSize = size * uPointMultiplier / gl_Position.w;
+				gl_PointSize = uPointMultiplier * size / gl_Position.z;
 
 				// to fragment shader
 				vAngle = vec2(cos(angle), sin(angle));
@@ -200,15 +199,15 @@ export function init() {
 	scene.add(points);
 }
 
-function step(elapsed) {
-	updateParticles(elapsed);
+function step(dt) {
+	updateParticles(dt);
 	updateGeometry();
 }
 
-export function update(elapsed: number) {
-	uniforms.uTime.value = elapsed;
+export function update(elapsed: number, dt: number) {
+	uniforms.uTime.value = dt;
 	controls.update();
-	step(elapsed);
+	step(dt);
 }
 
 export function resize(width: number, height: number) {}

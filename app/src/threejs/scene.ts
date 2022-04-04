@@ -20,6 +20,7 @@ export let renderer: WebGLRenderer;
 // utils objects
 export let size = { w: 0, h: 0 };
 const clock = new Clock();
+const deltaClock = new Clock();
 
 export async function createScene(canvas, init: Function, load: Function) {
 	// renderer settings
@@ -59,8 +60,9 @@ export async function createScene(canvas, init: Function, load: Function) {
 }
 
 export function updateScene(update: Function) {
-	const elapsed = clock.getDelta();
-	if (update) update(elapsed);
+	const elapsed = clock.getElapsedTime();
+	const dt = deltaClock.getDelta();
+	if (update) update(elapsed, dt);
 }
 
 export function resizeScene(width: number, height: number, resize: Function) {
