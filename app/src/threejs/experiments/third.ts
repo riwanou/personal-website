@@ -40,6 +40,27 @@ class Spline {
 	}
 }
 
+class Timer {
+	fire: Function;
+	totalTime: number;
+	current: number;
+
+	constructor(time: number, fire: Function) {
+		this.totalTime = time;
+		this.current = 0;
+		this.fire = fire;
+		this.fire();
+	}
+
+	update(dt) {
+		this.current += dt;
+		if (this.current > this.totalTime) {
+			this.fire();
+			this.current = 0;
+		}
+	}
+}
+
 let particles = [];
 const geometry = new BufferGeometry();
 const alphaSpline = new Spline([0, 0.05, 0.85, 1], [0, 1, 1, 0], 1);
@@ -49,6 +70,8 @@ const colorSpline = new Spline(
 	3
 );
 const sizeSpline = new Spline([0, 0.2, 0.5, 1.0], [0.1, 2, 6, 0.8], 1);
+
+const PARTICLE_SPAWN_TIME = 0.5;
 
 function addParticles() {
 	for (let i = 0; i < 10; i++) {
@@ -69,6 +92,8 @@ function addParticles() {
 		});
 	}
 }
+
+const spawnParticleTimer = new Timer(PARTICLE_SPAWN_TIME, addParticles);
 
 function updateParticles(dt) {
 	for (let p of particles) p.life -= dt;
@@ -194,12 +219,12 @@ export function init() {
 	});
 
 	// add
-	setInterval(addParticles, 300);
 	updateGeometry();
 	scene.add(points);
 }
 
 function step(dt) {
+	spawnParticleTimer.update(dt);
 	updateParticles(dt);
 	updateGeometry();
 }
