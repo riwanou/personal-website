@@ -10,16 +10,19 @@ import {
 	Object3D,
 	PlaneGeometry,
 	ShaderMaterial,
+	Vector3,
 	type FileLoader,
 	type TextureLoader
 } from "three";
 import { scene, camera, renderer, size } from "$threejs/scene";
 import { add, get } from "$threejs/ressources";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Emitter, ParticleRenderer } from "../fx/particles";
+import { ParticleRenderer } from "../fx/particle";
 
 import GUI from "lil-gui";
-const gui = new GUI({ container: document.getElementById("debug-gui") }).close();
+import { Emitter } from "$threejs/fx/emitter";
+import { AlphaModule, ColorModule } from "$threejs/fx/module";
+const gui = new GUI({ container: document.getElementById("debug-gui") });
 
 let controls: OrbitControls;
 const uniforms = {
@@ -50,7 +53,12 @@ export function init() {
 	scene.add(light);
 
 	// basic implementation of particle system
-	emitter = new Emitter(5);
+	emitter = new Emitter({ emissionRate: 10 });
+	emitter.addModule(new AlphaModule([0.0, 0.1, 1.0], [0, 1, 0]));
+	emitter.addModule(
+		new ColorModule([0, 0.2, 0.6], [new Color("blue"), new Color("orange"), new Color("red")])
+	);
+
 	particleRenderer = new ParticleRenderer(75000, get("noise", "texture"));
 	scene.add(particleRenderer.instanced);
 

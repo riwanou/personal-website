@@ -41,61 +41,32 @@ interface Particle {
 	lifetime: number;
 }
 
-class Emitter {
-	emissionRate: number;
-	emissionAcumulator: number;
-	particles: Particle[];
+abstract class Behaviour {
+	abstract update(particle: Particle, t: number, dt: number);
+}
+
+class LifetimeColor extends Behaviour {
+	colorSpline: Spline;
+
+	constructor(times: number[], colors: Color[]) {
+		super();
+		const colorArray = colors.map((color) => color.toArray()).flat();
+		this.colorSpline = new Spline(times, colorArray, 3);
+	}
+
+	update(particle: Particle, t: number, dt: number) {
+		particle.color = new Color(...this.colorSpline.get(t));
+	}
+}
+
+class LifetimeAlpha extends Behaviour {
 	alphaSpline: Spline;
-
-	constructor(emissionRate = 1.0) {
-		this.emissionRate = emissionRate;
-		this.emissionAcumulator = 1.0 / this.emissionRate;
-		this.particles = [];
-		this.alphaSpline = new Spline([0, 0.1, 0.8, 1.0], [0, 1, 1, 0], 1);
+	constructor(times: number[], alphas: number[]) {
+		super();
+		this.alphaSpline = new Spline(times, alphas, 1);
 	}
-
-	createParticle(): Particle {
-		const life = 3.0;
-		return {
-			position: new Vector3(random(), random() - 10.0, random()).multiplyScalar(1),
-			velocity: new Vector3(2.0, 5.0, 0),
-			acceleration: new Vector3(-0.05, 0, 0),
-			size: random(2.0, 5.0),
-			rotation: random() * Math.PI * 2,
-			color: new Color(random(), random(), random()),
-			alpha: 0.0,
-			life: life,
-			lifetime: life
-		};
-	}
-
-	updateParticles(dt) {
-		for (let i = this.particles.length - 1; i >= 0; i--) {
-			const p = this.particles[i];
-
-			p.life -= dt;
-			if (p.life <= 0) this.particles.splice(i, 1);
-			const t = 1.0 - p.life / p.lifetime;
-
-			p.velocity.add(p.acceleration);
-			p.position.add(p.velocity.clone().multiplyScalar(dt));
-			p.alpha = this.alphaSpline.get(t)[0];
-			p.rotation += dt;
-		}
-	}
-
-	update(dt) {
-		this.updateParticles(dt);
-
-		if (this.emissionRate > 0.0) {
-			this.emissionAcumulator += dt;
-			const n = Math.floor(this.emissionRate * this.emissionAcumulator);
-			this.emissionAcumulator -= n / this.emissionRate;
-			for (let i = 0; i < n; i++) {
-				const p = this.createParticle();
-				this.particles.push(p);
-			}
-		}
+	update(particle: Particle, t: number, dt: number) {
+		particle.alpha = this.alphaSpline.get(t)[0];
 	}
 }
 
@@ -151,7 +122,7 @@ class ParticleRenderer {
 			transparent: true,
 			side: DoubleSide,
 			depthWrite: false,
-			depthTest: true,
+			depthTest: false,
 			blending: AdditiveBlending
 		});
 
@@ -191,4 +162,5 @@ class ParticleRenderer {
 	}
 }
 
-export { Emitter, ParticleRenderer };
+export { ParticleRenderer, LifetimeColor, LifetimeAlpha };
+export type { Particle };
