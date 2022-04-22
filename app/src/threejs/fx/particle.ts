@@ -12,6 +12,7 @@ import {
 	Texture,
 	Vector3
 } from "three";
+import type { Emitter } from "./emitter";
 
 function random(min = 0.0, max = 1.0): number {
 	return Math.random() * (max - min) + min;
@@ -144,11 +145,12 @@ class ParticleRenderer {
 		this.dummy = new Object3D();
 	}
 
-	render(particles: Particle[]) {
+	render(emitter: Emitter) {
+		this.instanced.material.blending = emitter.blending;
 		const translates = this.instanced.geometry.getAttribute("translate");
 		const colors = this.instanced.geometry.getAttribute("color");
 		const infos = this.instanced.geometry.getAttribute("info");
-		for (const [i, p] of particles.entries()) {
+		for (const [i, p] of emitter.particles.entries()) {
 			this.instanced.setColorAt(i, new Color(1, 1, 1));
 			translates.setXYZ(i, p.position.x, p.position.y, p.position.z);
 			colors.setXYZW(i, p.color.r, p.color.g, p.color.b, p.alpha);
@@ -158,7 +160,7 @@ class ParticleRenderer {
 		translates.needsUpdate = true;
 		colors.needsUpdate = true;
 		infos.needsUpdate = true;
-		this.instanced.count = particles.length;
+		this.instanced.count = emitter.particles.length;
 	}
 }
 

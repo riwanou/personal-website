@@ -1,4 +1,5 @@
 import {
+	AdditiveBlending,
 	AmbientLight,
 	Color,
 	DoubleSide,
@@ -7,9 +8,12 @@ import {
 	Matrix4,
 	Mesh,
 	MeshBasicMaterial,
+	MultiplyBlending,
+	NormalBlending,
 	Object3D,
 	PlaneGeometry,
 	ShaderMaterial,
+	SubtractiveBlending,
 	Vector3,
 	type FileLoader,
 	type TextureLoader
@@ -41,6 +45,7 @@ export function load(fileLoader: FileLoader, textureLoader: TextureLoader) {
 export function init() {
 	// renderer
 	renderer.setClearColor(new Color("#0F172A"));
+	// renderer.setClearColor(new Color("gray"));
 
 	// controls
 	controls = new OrbitControls(camera, renderer.domElement);
@@ -54,16 +59,31 @@ export function init() {
 
 	// basic implementation of particle system
 	emitter = new Emitter({ emissionRate: 10 });
-	emitter.addModule(new AlphaModule([0.0, 0.1, 1.0], [0, 1, 0]));
-	emitter.addModule(
-		new ColorModule([0, 0.2, 0.6], [new Color("blue"), new Color("orange"), new Color("red")])
-	);
+	// emitter.addModule(new AlphaModule([0.0, 0.1, 1.0], [0, 1, 0]));
+	// emitter.addModule(
+	// 	new ColorModule(
+	// 		[0, 0.15, 0.25, 0.5],
+	// 		[new Color("blue"), new Color("orange"), new Color("red"), new Color("gray")]
+	// 	)
+	// );
 
 	particleRenderer = new ParticleRenderer(75000, get("noise", "texture"));
 	scene.add(particleRenderer.instanced);
 
 	// gui
-	gui.add(emitter, "emissionRate", 0, 200);
+	gui.add(emitter, "emissionRate", 0, 500);
+	gui.add(emitter, "lifetime", 0, 10);
+	gui.add(emitter, "spawnSize", 0, 5);
+	gui.add(emitter, "spawnSpeed", 0, 20);
+	gui.addColor(emitter, "spawnColor");
+	gui.add(emitter, "spawnAlpha", 0, 1);
+	gui.add(emitter, "gravity", 0, 10);
+	gui.add(emitter, "variance", 0, 5);
+	gui.add(emitter, "blending", {
+		Normal: NormalBlending,
+		Additive: AdditiveBlending,
+		Substractive: SubtractiveBlending
+	});
 }
 
 export function update(elapsed: number, dt: number) {
@@ -71,7 +91,7 @@ export function update(elapsed: number, dt: number) {
 	controls.update();
 	// particles
 	emitter.update(dt);
-	particleRenderer.render(emitter.particles);
+	particleRenderer.render(emitter);
 }
 
 export function resize(width: number, height: number) {}

@@ -1,4 +1,5 @@
-import { Color, Object3D, Vector3 } from "three";
+import { Color, NormalBlending, Object3D, Vector3 } from "three";
+import type { Blending } from "three";
 import type { Module } from "./module";
 import type { Particle } from "./particle";
 import * as DEFAULT from "./constant";
@@ -23,15 +24,35 @@ class Emitter extends Object3D {
 	spawnRotation: number;
 	spawnColor: Color;
 	spawnAlpha: number;
+	blending: Blending;
 
-	constructor({ emissionRate = DEFAULT.EMISSION_RATE }) {
+	constructor({
+		emissionRate = DEFAULT.EMISSION_RATE,
+		lifetime = DEFAULT.LIFETIME,
+		spawnSize = DEFAULT.SIZE,
+		spawnSpeed = DEFAULT.SPEED,
+		spawnRotation = DEFAULT.ROTATION,
+		spawnColor = DEFAULT.COLOR,
+		spawnAlpha = DEFAULT.ALPHA,
+		gravity = DEFAULT.GRAVITY,
+		variance = DEFAULT.VARIANCE
+	}) {
 		super();
+
 		this.emissionRate = emissionRate;
 		this.emissionAcumulator = 1.0 / this.emissionRate;
 		this.particles = [];
 		this.modules = new Map<Function, Module>();
-		this.gravity = DEFAULT.GRAVITY;
-		this.variance = 1.5;
+
+		this.lifetime = lifetime;
+		this.spawnSize = spawnSize;
+		this.spawnSpeed = spawnSpeed;
+		this.spawnRotation = spawnRotation;
+		this.spawnColor = spawnColor;
+		this.spawnAlpha = spawnAlpha;
+		this.gravity = gravity;
+		this.variance = variance;
+		this.blending = NormalBlending;
 	}
 
 	addModule(module: Module) {
@@ -51,16 +72,16 @@ class Emitter extends Object3D {
 			position: this.position.clone(),
 			velocity: new Vector3(
 				random(-this.variance, this.variance),
-				DEFAULT.SPEED,
+				this.spawnSpeed,
 				random(-this.variance, this.variance)
 			).applyQuaternion(this.quaternion),
 			acceleration: new Vector3(0, -this.gravity, 0),
-			size: DEFAULT.SIZE,
-			rotation: DEFAULT.ROTATION,
-			color: DEFAULT.COLOR,
-			alpha: DEFAULT.ALPHA,
-			lifetime: DEFAULT.LIFETIME,
-			life: DEFAULT.LIFETIME
+			size: this.spawnSize,
+			rotation: this.spawnRotation,
+			color: this.spawnColor,
+			alpha: this.spawnAlpha,
+			lifetime: this.lifetime,
+			life: this.lifetime
 		};
 		this.updateModules(particle, 0, 0);
 		return particle;
@@ -75,7 +96,7 @@ class Emitter extends Object3D {
 
 			p.velocity.add(p.acceleration.clone().multiplyScalar(dt));
 			p.position.add(p.velocity.clone().multiplyScalar(dt));
-			p.alpha = 1.0 - t;
+			p.alpha = this.spawnAlpha - t;
 
 			this.updateModules(p, t, dt);
 		}

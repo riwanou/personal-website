@@ -10,3 +10,4 @@ export const ROTATION: number = 0.0;
 export const COLOR: Color = new Color("white");
 export const ALPHA: number = 1.0;
 export const GRAVITY: number = 2.0;
+export const VARIANCE: number = 1.5;
